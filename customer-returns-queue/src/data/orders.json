@@ -1,0 +1,56 @@
+{
+  "ORD-5001": {
+    "order_id": "ORD-5001",
+    "customer_id": "C-1001",
+    "ordered_at": "2026-09-18",
+    "delivered_at": "2026-09-22",
+    "delivery_notes": "Left at front door. Driver note: box corner crushed.",
+    "items": [
+      {
+        "sku": "BP-TRAIL-45",
+        "name": "Trailhead 45L Backpack",
+        "category": "outdoor_gear",
+        "price": 189.0,
+        "final_sale": false
+      }
+    ],
+    "total": 189.0,
+    "currency": "USD"
+  },
+  "ORD-5002": {
+    "order_id": "ORD-5002",
+    "customer_id": "C-1002",
+    "ordered_at": "2026-10-24",
+    "delivered_at": "2026-10-28",
+    "delivery_notes": "Delivered to mailroom.",
+    "items": [
+      {
+        "sku": "JK-RAIN-M",
+        "name": "Stormline Rain Jacket (M)",
+        "category": "apparel",
+        "price": 129.0,
+        "final_sale": false
+      }
+    ],
+    "total": 129.0,
+    "currency": "USD"
+  },
+  "ORD-5003": {
+    "order_id": "ORD-5003",
+    "customer_id": "C-1003",
+    "ordered_at": "2026-08-25",
+    "delivered_at": "2026-08-30",
+    "delivery_notes": "Signed for by customer. No damage noted at handoff.",
+    "items": [
+      {
+        "sku": "ST-CAMP-2B",
+        "name": "Basecamp Two-Burner Stove",
+        "category": "outdoor_gear",
+        "price": 249.0,
+        "final_sale": false
+      }
+    ],
+    "total": 249.0,
+    "currency": "USD"
+  }
+}

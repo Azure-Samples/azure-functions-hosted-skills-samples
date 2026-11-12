@@ -1,0 +1,57 @@
+{
+  "C-1001": {
+    "customer_id": "C-1001",
+    "name": "Mei Tanaka",
+    "customer_since": "2021-04-02",
+    "account_flags": [],
+    "previous_returns": 1,
+    "tickets": [
+      {
+        "ticket_id": "T-2207",
+        "opened_at": "2026-09-24",
+        "channel": "email",
+        "order_id": "ORD-5001",
+        "summary": "Customer reported the backpack arrived with a torn main zipper and a bent frame stay. Photos attached.",
+        "agent_response": "Apologized and asked the customer to submit a return request from their account.",
+        "status": "closed"
+      }
+    ]
+  },
+  "C-1002": {
+    "customer_id": "C-1002",
+    "name": "Diego Alvarez",
+    "customer_since": "2024-11-15",
+    "account_flags": [],
+    "previous_returns": 0,
+    "tickets": []
+  },
+  "C-1003": {
+    "customer_id": "C-1003",
+    "name": "Sam Rivera",
+    "customer_since": "2025-06-10",
+    "account_flags": [
+      "return_review: two returns this year were received used"
+    ],
+    "previous_returns": 4,
+    "tickets": [
+      {
+        "ticket_id": "T-1980",
+        "opened_at": "2026-03-14",
+        "channel": "chat",
+        "order_id": "ORD-4120",
+        "summary": "Return of a tent marked 'damaged on arrival'; warehouse found it had been used and was dirty.",
+        "agent_response": "Return accepted as a one-time courtesy; account flagged for review.",
+        "status": "closed"
+      },
+      {
+        "ticket_id": "T-2311",
+        "opened_at": "2026-10-02",
+        "channel": "chat",
+        "order_id": "ORD-5003",
+        "summary": "Customer asked how to clean soot from the stove burners after a weekend trip.",
+        "agent_response": "Shared the cleaning guide.",
+        "status": "closed"
+      }
+    ]
+  }
+}

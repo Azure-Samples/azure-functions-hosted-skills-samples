@@ -1,57 +1,59 @@
-# Project Name
+# Azure Functions Hosted Skills — scenario samples
 
-(short, 1-3 sentenced, description of the project)
+Ready-to-run templates for [Azure Functions hosted skills](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios). Each folder is one business scenario: a hosted skill written in Markdown, the tools it calls, sample data, and Bicep infrastructure you deploy with one `azd up`.
 
-## Features
+Pick a scenario, deploy it, send the sample events, and read what the skill decided. Then replace the sample data with your systems.
 
-This project framework provides the following features:
+## Scenarios
 
-* Feature 1
-* Feature 2
-* ...
+| Template | Scenario | Trigger | Status |
+|---|---|---|---|
+| [`customer-returns-queue`](customer-returns-queue) | Triage return requests that don't fit the policy and recommend approve / exception / decline / escalate | Storage queue or Service Bus | ✅ Available |
+| `invoice-review-blob` | Check uploaded invoices against purchase orders and contract terms | Blob | Coming soon |
+| `contract-review-durable` | Add an AI clause review step to an existing Durable Functions workflow | HTTP from Durable orchestration | Coming soon |
+| `daily-work-briefing-timer` | Send a daily summary of mail, meetings, and chats | Timer | Coming soon |
+| `customer-retention-cosmos` | Write a retention report when an account's usage drops | Cosmos DB change feed | Coming soon |
+| `claims-review-workflow` | Plan and run parallel checks for an insurance claim | Blob + Dynamic Workflows (Durable Task Scheduler) | Coming soon |
+| `alert-investigation-eventhub` | Investigate only the security alerts that rules can't settle | Event Hubs → queue (Durable Task Scheduler) | Coming soon |
+| `teams-helpdesk-connector` | Answer helpdesk questions posted in a Teams channel | Connector (Teams) | Coming soon |
 
-## Getting Started
+## Quickstart
 
-### Prerequisites
+```bash
+git clone https://github.com/Azure-Samples/azure-functions-hosted-skills-samples
+cd azure-functions-hosted-skills-samples/customer-returns-queue
+azd up
+```
 
-(ideally very short, if any)
+Each template's README has the demo steps, local run instructions, and a "Make it yours" section.
 
-- OS
-- Library version
-- ...
+## What every template includes
 
-### Installation
+- `src/*.agent.md` — the hosted skill: trigger, instructions, and tool access in one Markdown file.
+- `src/tools/` — Python tools the skill calls. Side effects are idempotent and approval rules are enforced in code.
+- `src/data/` and `samples/` — mock business data and sample events that show interesting decisions.
+- `infra/` — Bicep for a Flex Consumption app, managed identity everywhere (no keys), Microsoft Foundry model, and monitoring.
+- `scripts/demo.py` — send the samples and print the results.
+- `tests/` — unit tests for the tools.
 
-(ideally very short)
+## Test
 
-- npm install [package name]
-- mvn install
-- ...
+One command runs the checks for every template:
 
-### Quickstart
-(Add steps to get up and running quickly)
+```bash
+python scripts/test.py                     # static: Bicep build + skill/tool loading; unit: pytest
+python scripts/test.py --level local       # + func start against Azurite
+python scripts/test.py --template customer-returns-queue --level deploy --down  # + azd up, e2e, azd down
+```
 
-1. git clone [repository clone url]
-2. cd [repository name]
-3. ...
-
-
-## Demo
-
-A demo app is included to show how to use the project.
-
-To run the demo, follow these steps:
-
-(Add steps to start up the demo)
-
-1.
-2.
-3.
+Requires Python 3.13 and the Azure CLI. The `local` level also needs Azure Functions Core Tools and Azurite. The `deploy` level creates billable Azure resources.
 
 ## Resources
 
-(Any additional resources or related projects)
+- [Hosted skills scenarios](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios)
+- [Daily blog hosted skill template](https://github.com/Azure-Samples/functions-daily-blog-hosted-skills-azd)
+- [Azure Developer CLI](https://aka.ms/azd)
 
-- Link to supporting information
-- Link to similar sample
-- ...
+## Contributing
+
+This project welcomes contributions and suggestions. See [CONTRIBUTING.md](CONTRIBUTING.md).

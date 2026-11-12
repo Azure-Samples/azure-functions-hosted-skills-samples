@@ -426,3 +426,15 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+# Scenario templates
+.venv/
+__pycache__/
+.pytest_cache/
+local.settings.json
+.azure/
+__azurite*
+__blobstorage__/
+__queuestorage__/
+.func-start.log
+.requirements-installed

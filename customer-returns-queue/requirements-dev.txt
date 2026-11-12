@@ -1,0 +1,4 @@
+-r src/requirements.txt
+azure-servicebus
+azure-storage-queue
+pytest
