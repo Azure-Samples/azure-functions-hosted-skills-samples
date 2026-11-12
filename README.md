@@ -9,7 +9,7 @@ Pick a scenario, deploy it, send the sample events, and read what the skill deci
 | Template | Scenario | Trigger | Status |
 |---|---|---|---|
 | [`customer-returns-queue`](customer-returns-queue) | Triage return requests that don't fit the policy and recommend approve / exception / decline / escalate | Storage queue or Service Bus | ✅ Available |
-| `invoice-review-blob` | Check uploaded invoices against purchase orders and contract terms | Blob | Coming soon |
+| [`invoice-review-blob`](invoice-review-blob) | Check uploaded invoice PDFs against purchase orders, receipts, and contract terms, and hold or reject the ones that don't match | Blob (Event Grid) | ✅ Available |
 | `contract-review-durable` | Add an AI clause review step to an existing Durable Functions workflow | HTTP from Durable orchestration | Coming soon |
 | `daily-work-briefing-timer` | Send a daily summary of mail, meetings, and chats | Timer | Coming soon |
 | `customer-retention-cosmos` | Write a retention report when an account's usage drops | Cosmos DB change feed | Coming soon |
@@ -33,7 +33,7 @@ Each template's README has the demo steps, local run instructions, and a "Make i
 - `src/tools/` — Python tools the skill calls. Side effects are idempotent and approval rules are enforced in code.
 - `src/data/` and `samples/` — mock business data and sample events that show interesting decisions.
 - `infra/` — Bicep for a Flex Consumption app, managed identity everywhere (no keys), Microsoft Foundry model, and monitoring.
-- `scripts/demo.py` — send the samples and print the results.
+- `scripts/demo.py` — send or upload the samples and print the results.
 - `tests/` — unit tests for the tools.
 
 ## Test

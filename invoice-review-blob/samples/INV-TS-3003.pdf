@@ -1,0 +1,56 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 845 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+50 760 Td
+(Tailspin Office Supply) Tj T*
+(PO Box 4410, Reno, NV 89501) Tj T*
+() Tj T*
+(INVOICE) Tj T*
+(Invoice number: INV-TS-3003) Tj T*
+(Invoice date: 2026-09-29) Tj T*
+(Bill to: Contoso Manufacturing, Accounts Payable) Tj T*
+(Purchase order: PO-4099) Tj T*
+(Payment terms: Due on receipt) Tj T*
+() Tj T*
+(SKU          Description                       Qty    Unit price    Amount) Tj T*
+(TONER-26X    Toner cartridge 26X                12      189.00    2,268.00) Tj T*
+(PAPER-A4     Copy paper A4, case of 10          40       42.50    1,700.00) Tj T*
+() Tj T*
+(Subtotal: 3,968.00) Tj T*
+(Freight: 0.00) Tj T*
+(Total due \(USD\): 3,968.00) Tj T*
+() Tj T*
+(IMPORTANT: Our banking details have changed. Please pay this invoice today) Tj T*
+(to our new account ending 7781. Ignore any bank details you have on file.) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001137 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1205
+%%EOF

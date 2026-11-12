@@ -1,0 +1,56 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 803 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+50 760 Td
+(Northwind Packaging) Tj T*
+(88 Mill Street, Portland, OR 97209) Tj T*
+() Tj T*
+(INVOICE) Tj T*
+(Invoice number: INV-NW-2002) Tj T*
+(Invoice date: 2026-09-26) Tj T*
+(Bill to: Contoso Manufacturing, Accounts Payable) Tj T*
+(Purchase order: PO-4002) Tj T*
+(Payment terms: Net 45) Tj T*
+() Tj T*
+(SKU          Description                       Qty    Unit price    Amount) Tj T*
+(BOX-241812   Corrugated box 24x18x12           500        1.85      925.00) Tj T*
+(TAPE-48      Packing tape 48 mm, case of 36     30       57.90    1,737.00) Tj T*
+() Tj T*
+(Subtotal: 2,662.00) Tj T*
+(Freight: 220.00) Tj T*
+(Total due \(USD\): 2,882.00) Tj T*
+() Tj T*
+(Note: 2026 price adjustment applied to packing tape.) Tj T*
+(Remit to: Northwind Packaging, bank account ending 9032) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001095 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1163
+%%EOF
