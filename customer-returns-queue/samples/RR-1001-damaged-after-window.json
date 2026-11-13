@@ -1,0 +1,8 @@
+{
+  "request_id": "RR-1001",
+  "order_id": "ORD-5001",
+  "customer_id": "C-1001",
+  "channel": "web_form",
+  "received_at": "2026-11-09T10:15:00Z",
+  "message": "Hi, I know it's past 30 days, but my backpack arrived damaged - the main zipper was torn and the frame was bent. I emailed you about it right after it arrived and sent photos, but I was traveling and only now got to the return form. Could I get a replacement?"
+}

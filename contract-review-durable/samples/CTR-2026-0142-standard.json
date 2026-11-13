@@ -1,0 +1,43 @@
+{
+  "contract_id": "CTR-2026-0142",
+  "title": "Fabrikam Analytics SaaS Subscription Agreement",
+  "contract_type": "saas_subscription",
+  "counterparty": "Fabrikam Analytics, Inc.",
+  "business_owner": "jordan.lee@contoso.com",
+  "effective_date": "2026-08-01",
+  "term_months": 12,
+  "annual_value": 48000,
+  "currency": "USD",
+  "clauses": [
+    {
+      "section": "4",
+      "heading": "Fees and Payment",
+      "text": "Customer will pay undisputed amounts within forty-five (45) days after receipt of a correct invoice. Fees are invoiced annually in advance."
+    },
+    {
+      "section": "5",
+      "heading": "Term, Renewal and Termination",
+      "text": "This Agreement renews for successive one-year terms unless Customer gives notice of non-renewal at least thirty (30) days before the end of the then-current term. Renewal fees will not increase by more than five percent (5%) over the prior term. Customer may terminate this Agreement for convenience on thirty (30) days' written notice, and Vendor will refund any prepaid fees for the period after the effective date of termination."
+    },
+    {
+      "section": "8",
+      "heading": "Indemnification",
+      "text": "Each party will defend and indemnify the other against third-party claims arising from its breach of this Agreement. Vendor will defend and indemnify Customer against any third-party claim that the Services infringe intellectual property rights."
+    },
+    {
+      "section": "9",
+      "heading": "Limitation of Liability",
+      "text": "Except for breaches of Confidentiality, breaches of Data Protection obligations, and amounts payable under Indemnification, each party's total liability arising out of this Agreement will not exceed the fees paid or payable by Customer in the twelve (12) months preceding the event giving rise to the claim."
+    },
+    {
+      "section": "10",
+      "heading": "Data Protection",
+      "text": "Vendor processes business contact data of Customer's employees to provide the Services. The Data Processing Addendum attached as Exhibit B applies. Vendor will notify Customer of any Personal Data breach without undue delay and in any event within seventy-two (72) hours."
+    },
+    {
+      "section": "14",
+      "heading": "Governing Law",
+      "text": "This Agreement is governed by the laws of the State of Washington, without regard to its conflict of laws rules. The state and federal courts in King County, Washington have exclusive jurisdiction."
+    }
+  ]
+}

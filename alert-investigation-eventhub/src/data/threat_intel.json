@@ -1,0 +1,46 @@
+{
+  "185.220.101.47": {
+    "type": "ipv4",
+    "verdict": "malicious",
+    "confidence": "high",
+    "categories": ["command-and-control", "malware-distribution"],
+    "associated_threats": ["LockDrop ransomware"],
+    "first_seen": "2026-08-02",
+    "source": "Contoso threat intel feed (sample)"
+  },
+  "102.89.34.12": {
+    "type": "ipv4",
+    "verdict": "suspicious",
+    "confidence": "medium",
+    "categories": ["hosting-provider", "anonymizing-vpn"],
+    "associated_threats": ["Seen in MFA fatigue campaigns against cloud administrators"],
+    "first_seen": "2026-06-18",
+    "source": "Contoso threat intel feed (sample)"
+  },
+  "contoso-invoices.co": {
+    "type": "domain",
+    "verdict": "malicious",
+    "confidence": "high",
+    "categories": ["phishing", "lookalike-domain"],
+    "associated_threats": ["LockDrop initial access via macro documents"],
+    "first_seen": "2026-10-30",
+    "source": "Contoso threat intel feed (sample)"
+  },
+  "9f2b6c1e4d3a5b7c8e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d": {
+    "type": "sha256",
+    "verdict": "malicious",
+    "confidence": "high",
+    "categories": ["ransomware-loader"],
+    "associated_threats": ["LockDrop ransomware"],
+    "first_seen": "2026-08-02",
+    "source": "Contoso threat intel feed (sample)"
+  },
+  "203.0.113.24": {
+    "type": "ipv4",
+    "verdict": "benign",
+    "confidence": "high",
+    "categories": ["corporate-egress"],
+    "associated_threats": [],
+    "source": "Contoso network inventory (sample)"
+  }
+}

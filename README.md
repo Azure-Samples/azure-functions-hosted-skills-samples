@@ -1,57 +1,64 @@
-# Project Name
+# Azure Functions Hosted Skills — scenario samples
 
-(short, 1-3 sentenced, description of the project)
+Ready-to-run templates for [Azure Functions hosted skills](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios). Each folder is one business scenario: a hosted skill written in Markdown, the tools it calls, sample data, and Bicep infrastructure you deploy with one `azd up`.
 
-## Features
+Pick a scenario, deploy it, send the sample events, and read what the skill decided. Then replace the sample data with your systems.
 
-This project framework provides the following features:
+## Scenarios
 
-* Feature 1
-* Feature 2
-* ...
+| Template | Scenario | Trigger | Status |
+|---|---|---|---|
+| [`customer-returns-queue`](customer-returns-queue) | Triage return requests that don't fit the policy and recommend approve / exception / decline / escalate | Storage queue or Service Bus | ✅ Available |
+| [`invoice-review-blob`](invoice-review-blob) | Check uploaded invoice PDFs against purchase orders, receipts, and contract terms, and hold or reject the ones that don't match | Blob (Event Grid) | ✅ Available |
+| [`contract-review-durable`](contract-review-durable) | Add an AI clause review step to an existing Durable Functions workflow | HTTP from Durable orchestration | ✅ Available |
+| [`daily-work-briefing-timer`](daily-work-briefing-timer) | Send a daily summary of mail, meetings, and chats | Timer | ✅ Available |
+| [`customer-retention-cosmos`](customer-retention-cosmos) | Write a retention report when an account's usage drops | Cosmos DB change feed | ✅ Available |
+| [`claims-review-workflow`](claims-review-workflow) | Plan and run parallel checks for an insurance claim | Blob + Dynamic Workflows (Durable Task Scheduler) | ✅ Available |
+| [`alert-investigation-eventhub`](alert-investigation-eventhub) | Investigate only the security alerts that rules can't settle | Event Hubs → Microsoft-Decision-1 → queue | ✅ Available |
+| [`teams-helpdesk-connector`](teams-helpdesk-connector) | Answer helpdesk questions posted in a Teams channel | Connector (Teams) + HTTP test | ✅ Available |
+| [`record-repair-servicebus`](record-repair-servicebus) | Add AI to an existing ingestion pipeline: repair malformed records from the dead-letter queue and requeue them through the original function | Service Bus dead-letter queue | ✅ Available |
+| [`expense-policy-queue`](expense-policy-queue) | Route free-form expense requests by the policy documents stored in Blob; edit one policy and only that category reroutes. Optional API Management AI Gateway (token limits, prompt shields, token metrics) | Storage queue | ✅ Available |
 
-## Getting Started
+The last two templates are simplified versions of the Hosted Skills team's demos [hosted-skills-delivery-recovery](https://github.com/greenie-msft/hosted-skills-delivery-recovery) and [hosted-skills-expense-processor](https://github.com/Azure-Samples/hosted-skills-expense-processor).
 
-### Prerequisites
+## Quickstart
 
-(ideally very short, if any)
+```bash
+git clone https://github.com/Azure-Samples/azure-functions-hosted-skills-samples
+cd azure-functions-hosted-skills-samples/customer-returns-queue
+azd up
+```
 
-- OS
-- Library version
-- ...
+Each template's README has the demo steps, local run instructions, and a "Make it yours" section.
 
-### Installation
+## What every template includes
 
-(ideally very short)
+- `src/*.agent.md` — the hosted skill: trigger, instructions, and tool access in one Markdown file.
+- `src/tools/` — Python tools the skill calls. Side effects are idempotent and approval rules are enforced in code.
+- `src/data/` and `samples/` — mock business data and sample events that show interesting decisions.
+- `infra/` — Bicep for a Flex Consumption app, managed identity everywhere (no keys), Microsoft Foundry model, and monitoring.
+- `scripts/demo.py` — send or upload the samples and print the results.
+- `tests/` — unit tests for the tools.
 
-- npm install [package name]
-- mvn install
-- ...
+## Test
 
-### Quickstart
-(Add steps to get up and running quickly)
+One command runs the checks for every template:
 
-1. git clone [repository clone url]
-2. cd [repository name]
-3. ...
+```bash
+python scripts/test.py                     # static: Bicep build + skill/tool loading; unit: pytest
+python scripts/test.py --level local       # + func start against Azurite (and the DTS emulator for Durable templates)
+python scripts/test.py --template claims-review-workflow --level local --port 7072  # pick another host port
+python scripts/test.py --template customer-returns-queue --level deploy --down  # + azd up, e2e, azd down
+```
 
-
-## Demo
-
-A demo app is included to show how to use the project.
-
-To run the demo, follow these steps:
-
-(Add steps to start up the demo)
-
-1.
-2.
-3.
+Requires Python 3.13 and the Azure CLI. The `local` level also needs Azure Functions Core Tools and Azurite. The `deploy` level creates billable Azure resources.
 
 ## Resources
 
-(Any additional resources or related projects)
+- [Hosted skills scenarios](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios)
+- [Daily blog hosted skill template](https://github.com/Azure-Samples/functions-daily-blog-hosted-skills-azd)
+- [Azure Developer CLI](https://aka.ms/azd)
 
-- Link to supporting information
-- Link to similar sample
-- ...
+## Contributing
+
+This project welcomes contributions and suggestions. See [CONTRIBUTING.md](CONTRIBUTING.md).

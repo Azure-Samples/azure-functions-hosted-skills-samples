@@ -1,0 +1,4 @@
+azurefunctions-agents-runtime[monitor]>=0.1.0b17
+azure-identity
+azure-storage-blob
+tzdata

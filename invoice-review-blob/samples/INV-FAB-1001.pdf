@@ -1,0 +1,56 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 850 >>
+stream
+BT
+/F1 10 Tf
+12 TL
+50 760 Td
+(Fabrikam Industrial Supply) Tj T*
+(1200 Harbor Way, Tacoma, WA 98402) Tj T*
+() Tj T*
+(INVOICE) Tj T*
+(Invoice number: INV-FAB-1001) Tj T*
+(Invoice date: 2026-09-18) Tj T*
+(Bill to: Contoso Manufacturing, Accounts Payable) Tj T*
+(Purchase order: PO-4001) Tj T*
+(Payment terms: Net 30, 2% 10 days) Tj T*
+() Tj T*
+(SKU          Description                       Qty    Unit price    Amount) Tj T*
+(BRG-6204     Deep groove ball bearing 6204     200        4.80      960.00) Tj T*
+(BLT-M8-40    Hex bolt M8x40, box of 100         50       12.50      625.00) Tj T*
+(GLV-NIT-L    Nitrile gloves, size L, case       20       38.00      760.00) Tj T*
+() Tj T*
+(Subtotal: 2,345.00) Tj T*
+(Freight: 45.00) Tj T*
+(Total due \(USD\): 2,390.00) Tj T*
+() Tj T*
+(Remit to: Fabrikam Industrial Supply, bank account ending 4417) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001142 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1210
+%%EOF

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+name: functions-hosted-skills-expense-policy
+metadata:
+  template: functions-hosted-skills-expense-policy@0.0.1-beta
+services:
+  api:
+    project: ./src
+    language: python
+    host: function
+hooks:
+  # Upload the policy documents in ./policies to the 'policies' container. Documents that
+  # already exist are left alone, so policy edits made in Blob Storage survive a redeploy.
+  postdeploy:
+    windows:
+      shell: pwsh
+      run: python ./scripts/postdeploy.py
+      continueOnError: false
+    posix:
+      shell: sh
+      run: python3 ./scripts/postdeploy.py
+      continueOnError: false

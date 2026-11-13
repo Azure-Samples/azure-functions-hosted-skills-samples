@@ -1,0 +1,112 @@
+[
+  {
+    "alert_id": "ALR-1001",
+    "source": "contoso-edr",
+    "rule_id": "EDR-RANSOMWARE-BEHAVIOR",
+    "title": "Ransomware behavior: shadow copies deleted and mass file renames",
+    "severity": "critical",
+    "host": "fin-ws-22",
+    "user": "m.garcia",
+    "description": "vssadmin.exe deleted all shadow copies, then 1,842 files were renamed to *.lockd within two minutes, including files on a mapped finance share.",
+    "evidence": {"process": "rundll32.exe", "parent": "powershell.exe", "command_line": "vssadmin.exe delete shadows /all /quiet", "renamed_files": 1842, "extension": ".lockd"}
+  },
+  {
+    "alert_id": "ALR-1002",
+    "source": "contoso-idp",
+    "rule_id": "IDP-IMPOSSIBLE-TRAVEL",
+    "title": "Impossible travel followed by privileged role assignment",
+    "severity": "medium",
+    "host": "lt-apatel",
+    "user": "a.patel",
+    "description": "Cloud administrator a.patel signed in from Seattle, US and five hours later from Lagos, NG (102.89.34.12) after six denied MFA push requests. Six minutes after the Lagos sign-in, an Owner role assignment on the production subscription was created for the account.",
+    "evidence": {"previous_location": "Seattle, US", "new_location": "Lagos, NG", "new_ip": "102.89.34.12", "mfa_denied_before_success": 6, "follow_up_activity": "Owner role assignment on sub-contoso-prod"}
+  },
+  {
+    "alert_id": "ALR-1003",
+    "source": "contoso-infra-monitor",
+    "rule_id": "INFRA-DISK-SPACE",
+    "title": "Low disk space on D:",
+    "severity": "low",
+    "host": "app-07",
+    "user": "",
+    "description": "Volume D: on app-07 has 6% free space (threshold 10%).",
+    "evidence": {"volume": "D:", "free_percent": 6, "threshold_percent": 10}
+  },
+  {
+    "alert_id": "ALR-1004",
+    "source": "contoso-infra-monitor",
+    "rule_id": "INFRA-DISK-SPACE",
+    "title": "Low disk space on D:",
+    "severity": "low",
+    "host": "app-07",
+    "user": "",
+    "description": "Volume D: on app-07 has 6% free space (threshold 10%).",
+    "evidence": {"volume": "D:", "free_percent": 6, "threshold_percent": 10}
+  },
+  {
+    "alert_id": "ALR-1005",
+    "source": "contoso-infra-monitor",
+    "rule_id": "INFRA-DISK-SPACE",
+    "title": "Low disk space on D:",
+    "severity": "low",
+    "host": "app-07",
+    "user": "",
+    "description": "Volume D: on app-07 has 5% free space (threshold 10%).",
+    "evidence": {"volume": "D:", "free_percent": 5, "threshold_percent": 10}
+  },
+  {
+    "alert_id": "ALR-1006",
+    "source": "contoso-infra-monitor",
+    "rule_id": "INFRA-DISK-SPACE",
+    "title": "Low disk space on D:",
+    "severity": "low",
+    "host": "app-07",
+    "user": "",
+    "description": "Volume D: on app-07 has 5% free space (threshold 10%).",
+    "evidence": {"volume": "D:", "free_percent": 5, "threshold_percent": 10}
+  },
+  {
+    "alert_id": "ALR-1007",
+    "source": "contoso-infra-monitor",
+    "rule_id": "INFRA-DISK-SPACE",
+    "title": "Low disk space on D:",
+    "severity": "low",
+    "host": "app-07",
+    "user": "",
+    "description": "Volume D: on app-07 has 5% free space (threshold 10%).",
+    "evidence": {"volume": "D:", "free_percent": 5, "threshold_percent": 10}
+  },
+  {
+    "alert_id": "ALR-1008",
+    "source": "contoso-idp",
+    "rule_id": "IDP-PASSWORD-EXPIRY",
+    "title": "Password expires in 5 days",
+    "severity": "informational",
+    "host": "",
+    "user": "j.chen",
+    "description": "The password for j.chen expires in 5 days. The user has been notified by email.",
+    "evidence": {"days_until_expiry": 5, "notified": true}
+  },
+  {
+    "alert_id": "ALR-1009",
+    "source": "contoso-ndr",
+    "rule_id": "NET-PORT-SCAN",
+    "title": "Internal port scan detected",
+    "severity": "low",
+    "host": "scan-01",
+    "user": "",
+    "description": "scan-01 sent TCP SYN probes to ports 1-1024 on 10.20.0.0/16.",
+    "evidence": {"ports": "1-1024", "targets": "10.20.0.0/16", "probes": 65536}
+  },
+  {
+    "alert_id": "ALR-1010",
+    "source": "contoso-mail",
+    "rule_id": "MAIL-PHISH-QUARANTINED",
+    "title": "Phishing email quarantined before delivery",
+    "severity": "low",
+    "host": "mail-gw",
+    "user": "k.lee",
+    "description": "A credential-phishing email to k.lee was detected by the mail gateway sandbox and quarantined before delivery. The user never received it and no link was clicked.",
+    "evidence": {"sender": "no-reply@m1crosoft-support.co", "action": "quarantined", "delivered": false, "clicks": 0}
+  }
+]

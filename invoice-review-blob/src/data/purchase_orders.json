@@ -1,0 +1,30 @@
+{
+  "PO-4001": {
+    "po_number": "PO-4001",
+    "vendor_id": "VEND-100",
+    "vendor_name": "Fabrikam Industrial Supply",
+    "ordered_at": "2026-09-02",
+    "status": "received",
+    "lines": [
+      {"sku": "BRG-6204", "description": "Deep groove ball bearing 6204", "quantity_ordered": 200, "quantity_received": 200, "unit_price": 4.80},
+      {"sku": "BLT-M8-40", "description": "Hex bolt M8x40, box of 100", "quantity_ordered": 50, "quantity_received": 50, "unit_price": 12.50},
+      {"sku": "GLV-NIT-L", "description": "Nitrile gloves, size L, case", "quantity_ordered": 20, "quantity_received": 20, "unit_price": 38.00}
+    ],
+    "goods_receipts": ["GR-7710 received 2026-09-15, all lines complete"]
+  },
+  "PO-4002": {
+    "po_number": "PO-4002",
+    "vendor_id": "VEND-200",
+    "vendor_name": "Northwind Packaging",
+    "ordered_at": "2026-09-10",
+    "status": "partially_received",
+    "lines": [
+      {"sku": "BOX-241812", "description": "Corrugated box 24x18x12", "quantity_ordered": 500, "quantity_received": 400, "unit_price": 1.85},
+      {"sku": "TAPE-48", "description": "Packing tape 48 mm, case of 36", "quantity_ordered": 30, "quantity_received": 30, "unit_price": 54.00}
+    ],
+    "goods_receipts": [
+      "GR-7764 received 2026-09-24: BOX-241812 x400, TAPE-48 x30",
+      "BOX-241812 x100 back-ordered by vendor"
+    ]
+  }
+}

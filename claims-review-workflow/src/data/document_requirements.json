@@ -1,0 +1,19 @@
+{
+  "auto_collision": [
+    { "type": "repair_estimate", "description": "Itemized repair estimate from a licensed body shop" },
+    { "type": "photos", "description": "Photos of the damage" }
+  ],
+  "auto_theft": [
+    { "type": "police_report", "description": "Police report with a report number" },
+    { "type": "proof_of_ownership", "description": "Vehicle title or registration" }
+  ],
+  "home_water_damage": [
+    { "type": "repair_estimate", "description": "Contractor repair or remediation estimate" },
+    { "type": "photos", "description": "Photos of the damaged area" },
+    { "type": "plumber_report", "description": "Plumber report stating the cause of the leak" }
+  ],
+  "home_theft": [
+    { "type": "police_report", "description": "Police report with a report number" },
+    { "type": "inventory_list", "description": "List of stolen items with values" }
+  ]
+}

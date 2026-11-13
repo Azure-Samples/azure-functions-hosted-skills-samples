@@ -1,0 +1,53 @@
+{
+  "POL-A-1001": {
+    "policy_number": "POL-A-1001",
+    "customer_id": "CUST-501",
+    "holder": "Jordan Lee",
+    "product": "Personal Auto",
+    "status": "active",
+    "effective_date": "2026-01-01",
+    "expiry_date": "2026-12-31",
+    "coverages": {
+      "auto_collision": { "limit": 25000, "deductible": 500 },
+      "auto_theft": { "limit": 40000, "deductible": 1000 }
+    }
+  },
+  "POL-H-2001": {
+    "policy_number": "POL-H-2001",
+    "customer_id": "CUST-502",
+    "holder": "Priya Raman",
+    "product": "Homeowners",
+    "status": "active",
+    "effective_date": "2026-03-15",
+    "expiry_date": "2027-03-14",
+    "coverages": {
+      "home_water_damage": { "limit": 50000, "deductible": 1000 },
+      "home_theft": { "limit": 20000, "deductible": 500 }
+    }
+  },
+  "POL-A-3003": {
+    "policy_number": "POL-A-3003",
+    "customer_id": "CUST-503",
+    "holder": "Alex Morgan",
+    "product": "Personal Auto",
+    "status": "active",
+    "effective_date": "2026-10-10",
+    "expiry_date": "2027-10-09",
+    "coverages": {
+      "auto_collision": { "limit": 60000, "deductible": 1000 },
+      "auto_theft": { "limit": 60000, "deductible": 1000 }
+    }
+  },
+  "POL-A-0999": {
+    "policy_number": "POL-A-0999",
+    "customer_id": "CUST-504",
+    "holder": "Sam Ortiz",
+    "product": "Personal Auto",
+    "status": "lapsed",
+    "effective_date": "2025-06-01",
+    "expiry_date": "2026-05-31",
+    "coverages": {
+      "auto_collision": { "limit": 25000, "deductible": 500 }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "ACC-1001": {
+    "monthly_active_users": [352, 358, 361, 355, 349, 340],
+    "features_adopted": ["dashboards", "scheduled_exports", "sso", "audit_logs"],
+    "last_qbr_days_ago": 70,
+    "nps": 42
+  },
+  "ACC-1002": {
+    "monthly_active_users": [72, 71, 70, 69, 66, 62],
+    "features_adopted": ["dashboards"],
+    "last_qbr_days_ago": 210,
+    "nps": 6
+  },
+  "ACC-1003": {
+    "monthly_active_users": [11, 12, 12, 13, 12, 12],
+    "features_adopted": ["dashboards", "standard_reports"],
+    "last_qbr_days_ago": null,
+    "nps": 35
+  },
+  "ACC-1004": {
+    "monthly_active_users": [880, 890, 905, 910, 918, 925],
+    "features_adopted": ["dashboards", "scheduled_exports", "sso", "audit_logs", "api"],
+    "last_qbr_days_ago": 30,
+    "nps": 61
+  }
+}

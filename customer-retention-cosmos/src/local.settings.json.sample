@@ -1,0 +1,15 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AZURE_FUNCTIONS_AGENTS_PROVIDER": "foundry",
+    "FOUNDRY_PROJECT_ENDPOINT": "",
+    "FOUNDRY_MODEL": "gpt-5.4",
+    "COSMOS__accountEndpoint": "https://localhost:8081/",
+    "COSMOS_DATABASE": "retention",
+    "ACCOUNTS_CONTAINER": "accounts",
+    "LEASES_CONTAINER": "leases",
+    "RETENTION_ACTIONS_CONTAINER": "retention-actions"
+  }
+}

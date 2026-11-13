@@ -1,0 +1,93 @@
+{
+  "hosts": {
+    "fin-ws-22": {
+      "type": "workstation",
+      "os": "Windows 11",
+      "department": "Finance",
+      "owner": "m.garcia",
+      "criticality": "high",
+      "tags": ["finance", "pci-scope"],
+      "notes": "Accounts payable workstation with mapped drive to \\\\fs-02\\finance."
+    },
+    "lt-apatel": {
+      "type": "laptop",
+      "os": "macOS 15",
+      "department": "Cloud Platform",
+      "owner": "a.patel",
+      "criticality": "high",
+      "tags": ["privileged-user-device"],
+      "notes": "Primary device of a cloud subscription administrator."
+    },
+    "scan-01": {
+      "type": "server",
+      "os": "Ubuntu 24.04",
+      "department": "Security",
+      "owner": "secops",
+      "criticality": "medium",
+      "tags": ["authorized-scanner"],
+      "notes": "Vulnerability scanner. Weekly internal port scans approved under change CHG-4471."
+    },
+    "app-07": {
+      "type": "server",
+      "os": "Windows Server 2022",
+      "department": "IT Operations",
+      "owner": "it-ops",
+      "criticality": "low",
+      "tags": ["internal-app"],
+      "notes": "Internal reporting app server. Log volume D: fills up between rotations."
+    },
+    "mail-gw": {
+      "type": "appliance",
+      "os": "Mail gateway",
+      "department": "IT Operations",
+      "owner": "it-ops",
+      "criticality": "medium",
+      "tags": ["email-security"],
+      "notes": "Inbound mail gateway with sandboxing and quarantine."
+    },
+    "fs-02": {
+      "type": "server",
+      "os": "Windows Server 2022",
+      "department": "Finance",
+      "owner": "it-ops",
+      "criticality": "high",
+      "tags": ["file-server", "finance", "pci-scope"],
+      "notes": "Finance file server. Nightly backup at 01:00 UTC."
+    }
+  },
+  "users": {
+    "m.garcia": {
+      "display_name": "Maria Garcia",
+      "department": "Finance",
+      "title": "Accounts Payable Specialist",
+      "manager": "d.okafor",
+      "privileged": false,
+      "usual_locations": ["Seattle, US"]
+    },
+    "a.patel": {
+      "display_name": "Arjun Patel",
+      "department": "Cloud Platform",
+      "title": "Cloud Administrator",
+      "manager": "s.nguyen",
+      "privileged": true,
+      "roles": ["Contributor on sub-contoso-prod"],
+      "usual_locations": ["Seattle, US"]
+    },
+    "j.chen": {
+      "display_name": "Jun Chen",
+      "department": "Marketing",
+      "title": "Content Designer",
+      "manager": "r.silva",
+      "privileged": false,
+      "usual_locations": ["Vancouver, CA"]
+    },
+    "k.lee": {
+      "display_name": "Kim Lee",
+      "department": "Sales",
+      "title": "Account Executive",
+      "manager": "r.silva",
+      "privileged": false,
+      "usual_locations": ["Seattle, US"]
+    }
+  }
+}

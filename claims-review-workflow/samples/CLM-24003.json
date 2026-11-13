@@ -1,0 +1,15 @@
+{
+  "claim_id": "CLM-24003",
+  "policy_number": "POL-A-3003",
+  "claim_type": "auto_theft",
+  "claimant": { "name": "Alex Morgan", "email": "alex.morgan@example.com" },
+  "incident_date": "2026-10-25",
+  "reported_date": "2026-10-26",
+  "amount_claimed": 48500.00,
+  "currency": "USD",
+  "description": "2025 SUV stolen from the driveway overnight. Both keys are accounted for. Please process quickly, the vehicle was fully paid off.",
+  "documents": [
+    { "type": "police_report", "file": "CLM-24003/police-report.txt" },
+    { "type": "proof_of_ownership", "file": "CLM-24003/registration.txt" }
+  ]
+}

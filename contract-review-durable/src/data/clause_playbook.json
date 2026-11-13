@@ -1,0 +1,152 @@
+{
+  "company": "Contoso Manufacturing",
+  "perspective": "Contoso is the customer buying software or services from a vendor.",
+  "contract_types": {
+    "saas_subscription": {
+      "title": "SaaS subscription agreement",
+      "required_clauses": [
+        "limitation_of_liability",
+        "payment_terms",
+        "termination",
+        "auto_renewal",
+        "indemnification",
+        "governing_law",
+        "data_protection"
+      ]
+    },
+    "master_services": {
+      "title": "Master services agreement",
+      "required_clauses": [
+        "limitation_of_liability",
+        "payment_terms",
+        "termination",
+        "indemnification",
+        "governing_law",
+        "data_protection"
+      ]
+    }
+  },
+  "clauses": {
+    "limitation_of_liability": {
+      "title": "Limitation of liability",
+      "standard_position": "Vendor liability is capped at no less than the fees paid or payable in the 12 months before the claim. The cap does not apply to confidentiality breaches, data protection breaches, or indemnified claims.",
+      "acceptable_fallback": "Cap of 6 to 11 months of fees, with the same carve-outs.",
+      "non_standard_signals": [
+        "Cap below 6 months of fees",
+        "Cap applies to data protection breaches or indemnified claims",
+        "Contoso's liability is uncapped while the vendor's is capped"
+      ],
+      "severity": "high"
+    },
+    "payment_terms": {
+      "title": "Payment terms",
+      "standard_position": "Net 45 days or longer from receipt of a correct invoice.",
+      "acceptable_fallback": "Net 30 to net 44.",
+      "non_standard_signals": [
+        "Payment due in fewer than 30 days",
+        "Payment in advance for more than 12 months",
+        "Late fees above 1% per month"
+      ],
+      "severity": "low"
+    },
+    "termination": {
+      "title": "Termination",
+      "standard_position": "Contoso may terminate for convenience with 30 days' written notice and receives a pro-rata refund of prepaid fees.",
+      "acceptable_fallback": "Termination for convenience with up to 90 days' notice.",
+      "non_standard_signals": [
+        "No termination for convenience",
+        "Notice period longer than 90 days",
+        "No refund of prepaid fees on termination"
+      ],
+      "severity": "medium"
+    },
+    "auto_renewal": {
+      "title": "Renewal",
+      "standard_position": "No automatic renewal, or automatic renewal that Contoso can cancel with 30 days' notice, with price increases capped at 5% per renewal.",
+      "acceptable_fallback": "Cancellation notice of up to 60 days and price increases up to 7%.",
+      "non_standard_signals": [
+        "Cancellation notice longer than 60 days",
+        "Uncapped renewal price increases or increases above 7%"
+      ],
+      "severity": "medium"
+    },
+    "indemnification": {
+      "title": "Indemnification",
+      "standard_position": "Mutual indemnification, including vendor indemnity for third-party intellectual property infringement claims.",
+      "acceptable_fallback": "Vendor-only indemnification for IP infringement.",
+      "non_standard_signals": [
+        "Only Contoso indemnifies the vendor",
+        "No vendor indemnity for IP infringement"
+      ],
+      "severity": "high"
+    },
+    "governing_law": {
+      "title": "Governing law",
+      "standard_position": "Laws of the State of Washington, with exclusive venue in the state or federal courts in King County, Washington.",
+      "acceptable_fallback": "Delaware or New York law and venue.",
+      "non_standard_signals": [
+        "Governing law or venue in any state other than Washington, Delaware, or New York"
+      ],
+      "severity": "medium"
+    },
+    "data_protection": {
+      "title": "Data protection",
+      "standard_position": "When the vendor processes personal data, a data processing addendum (DPA) is incorporated and the vendor notifies Contoso of breaches within 72 hours.",
+      "acceptable_fallback": "DPA incorporated with breach notification within 7 days.",
+      "non_standard_signals": [
+        "Personal data processed without a DPA",
+        "No breach notification commitment"
+      ],
+      "severity": "high"
+    }
+  },
+  "scoring": {
+    "acceptable_points": 5,
+    "non_standard_points": {
+      "low": 5,
+      "medium": 15,
+      "high": 30
+    },
+    "missing_clause_points": 15,
+    "risk_levels": {
+      "low": 0,
+      "medium": 20,
+      "high": 40
+    }
+  },
+  "thresholds": {
+    "liability_cap_months": {
+      "standard_min": 12,
+      "acceptable_min": 6
+    },
+    "payment_days": {
+      "standard_min": 45,
+      "acceptable_min": 30
+    },
+    "termination_notice_days": {
+      "standard_max": 30,
+      "acceptable_max": 90
+    },
+    "renewal_notice_days": {
+      "standard_max": 30,
+      "acceptable_max": 60
+    },
+    "renewal_price_increase_pct": {
+      "standard_max": 5,
+      "acceptable_max": 7
+    },
+    "breach_notification_hours": {
+      "standard_max": 72,
+      "acceptable_max": 168
+    },
+    "governing_law": {
+      "standard": [
+        "washington"
+      ],
+      "acceptable": [
+        "delaware",
+        "new york"
+      ]
+    }
+  }
+}

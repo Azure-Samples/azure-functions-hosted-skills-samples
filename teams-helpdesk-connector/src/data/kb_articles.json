@@ -1,0 +1,60 @@
+{
+  "articles": [
+    {
+      "id": "KB-1001",
+      "title": "Connect to the corporate VPN",
+      "tags": ["vpn", "remote", "globalprotect", "connect", "home", "network", "cannot connect", "disconnect"],
+      "content": "Contoso uses the Contoso Secure Connect VPN client. 1) Open Contoso Secure Connect from the Start menu (Windows) or the menu bar (macOS). 2) Choose the portal vpn.contoso.example and sign in with your work account. 3) Approve the multifactor prompt in Microsoft Authenticator. If it fails with 'gateway unreachable', switch from guest or hotel Wi-Fi captive portals by opening any web page first, then reconnect. If the client is missing, install it from Company Portal. If you still cannot connect after a restart, the helpdesk will check your VPN group membership.",
+      "source_url": "https://contoso.sharepoint.com/sites/it/kb/KB-1001"
+    },
+    {
+      "id": "KB-1002",
+      "title": "Reset or unlock your work account password",
+      "tags": ["password", "reset", "locked", "unlock", "forgot", "expired", "sspr", "account"],
+      "content": "Use self-service password reset at https://aka.ms/sspr. You need one registered method (Authenticator app or phone). If your account is locked after too many attempts, wait 15 minutes or use self-service reset to unlock it. IT staff never ask for your password in Teams, email, or by phone. If you have no registered method, the helpdesk verifies your identity by video call before resetting.",
+      "source_url": "https://contoso.sharepoint.com/sites/it/kb/KB-1002"
+    },
+    {
+      "id": "KB-1003",
+      "title": "Set up Microsoft Authenticator on a new phone",
+      "tags": ["mfa", "authenticator", "new phone", "multifactor", "2fa", "lost phone", "sign in"],
+      "content": "Go to https://mysignins.microsoft.com/security-info from a device where you are signed in, choose 'Add sign-in method', and scan the QR code with Microsoft Authenticator on the new phone. Then delete the old phone. If you lost the old phone and cannot sign in anywhere, the helpdesk issues a temporary access pass after verifying your identity.",
+      "source_url": "https://contoso.sharepoint.com/sites/it/kb/KB-1003"
+    },
+    {
+      "id": "KB-1004",
+      "title": "Add an office printer",
+      "tags": ["printer", "print", "printing", "queue", "follow-me", "scan"],
+      "content": "All office printers use the follow-me queue 'Contoso-Print'. Windows: Settings > Bluetooth & devices > Printers & scanners > Add device and choose Contoso-Print. macOS: install 'Contoso Print' from Company Portal. Release jobs at any printer by tapping your badge. Jobs are held for 24 hours.",
+      "source_url": "https://contoso.sharepoint.com/sites/it/kb/KB-1004"
+    },
+    {
+      "id": "KB-1005",
+      "title": "Mailbox is full",
+      "tags": ["outlook", "mailbox", "full", "quota", "storage", "email", "archive"],
+      "content": "Mailboxes are 100 GB with online archive enabled. In Outlook, right-click your mailbox and choose 'Clean up Folder' or empty Deleted Items. Items older than two years move to the online archive automatically. Large attachments should be shared as OneDrive links instead.",
+      "source_url": "https://contoso.sharepoint.com/sites/it/kb/KB-1005"
+    },
+    {
+      "id": "KB-1006",
+      "title": "Teams audio or camera not working in meetings",
+      "tags": ["teams", "audio", "microphone", "camera", "headset", "meeting", "sound", "video"],
+      "content": "In a Teams meeting, select More > Settings > Device settings and choose the correct speaker, microphone, and camera. Make sure the headset is not muted on the device itself. On Windows, check Settings > Privacy & security > Microphone/Camera and allow access for Teams. Restart Teams after plugging in a new headset.",
+      "source_url": "https://contoso.sharepoint.com/sites/it/kb/KB-1006"
+    },
+    {
+      "id": "KB-1007",
+      "title": "Request software",
+      "tags": ["software", "install", "application", "app", "license", "request", "company portal"],
+      "content": "Free approved apps are self-service in Company Portal. Licensed or restricted apps need a software request ticket; the helpdesk installs them through Company Portal so you never need local administrator rights. Local administrator rights are not granted through the helpdesk channel; developers who need elevated rights use the Privileged Access request process, which a person reviews.",
+      "source_url": "https://contoso.sharepoint.com/sites/it/kb/KB-1007"
+    },
+    {
+      "id": "KB-1008",
+      "title": "Connect to office Wi-Fi",
+      "tags": ["wifi", "wi-fi", "wireless", "guest", "network", "internet", "eap"],
+      "content": "Company laptops join 'Contoso-Corp' automatically with a device certificate. Personal devices and visitors use 'Contoso-Guest'; the daily guest code is shown on the reception screen. If a company laptop does not join Contoso-Corp, connect to Contoso-Guest, open Company Portal, and choose 'Sync' to renew the certificate.",
+      "source_url": "https://contoso.sharepoint.com/sites/it/kb/KB-1008"
+    }
+  ]
+}

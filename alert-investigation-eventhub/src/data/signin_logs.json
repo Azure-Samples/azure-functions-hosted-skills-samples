@@ -1,0 +1,23 @@
+{
+  "a.patel": [
+    {"offset_minutes": -310, "result": "success", "app": "Azure Portal", "ip": "203.0.113.24", "location": "Seattle, US", "device": "lt-apatel", "mfa": "approved"},
+    {"offset_minutes": -42, "result": "mfa_denied", "app": "Azure Portal", "ip": "102.89.34.12", "location": "Lagos, NG", "device": "unknown (Windows, Chrome)", "mfa": "push denied"},
+    {"offset_minutes": -40, "result": "mfa_denied", "app": "Azure Portal", "ip": "102.89.34.12", "location": "Lagos, NG", "device": "unknown (Windows, Chrome)", "mfa": "push denied"},
+    {"offset_minutes": -37, "result": "mfa_denied", "app": "Azure Portal", "ip": "102.89.34.12", "location": "Lagos, NG", "device": "unknown (Windows, Chrome)", "mfa": "push denied"},
+    {"offset_minutes": -33, "result": "mfa_denied", "app": "Azure Portal", "ip": "102.89.34.12", "location": "Lagos, NG", "device": "unknown (Windows, Chrome)", "mfa": "push denied"},
+    {"offset_minutes": -29, "result": "mfa_denied", "app": "Azure Portal", "ip": "102.89.34.12", "location": "Lagos, NG", "device": "unknown (Windows, Chrome)", "mfa": "push denied"},
+    {"offset_minutes": -24, "result": "mfa_denied", "app": "Azure Portal", "ip": "102.89.34.12", "location": "Lagos, NG", "device": "unknown (Windows, Chrome)", "mfa": "push denied"},
+    {"offset_minutes": -18, "result": "success", "app": "Azure Portal", "ip": "102.89.34.12", "location": "Lagos, NG", "device": "unknown (Windows, Chrome)", "mfa": "push approved"},
+    {"offset_minutes": -6, "result": "success", "app": "Azure Resource Manager", "ip": "102.89.34.12", "location": "Lagos, NG", "device": "unknown (Windows, Chrome)", "mfa": "token reuse", "activity": "Role assignment created: Owner on sub-contoso-prod for a.patel"}
+  ],
+  "m.garcia": [
+    {"offset_minutes": -95, "result": "success", "app": "Windows sign-in", "ip": "10.20.4.22", "location": "Seattle, US", "device": "fin-ws-22", "mfa": "Windows Hello"},
+    {"offset_minutes": -20, "result": "success", "app": "Outlook", "ip": "10.20.4.22", "location": "Seattle, US", "device": "fin-ws-22", "mfa": "session"}
+  ],
+  "j.chen": [
+    {"offset_minutes": -120, "result": "success", "app": "Microsoft 365", "ip": "198.51.100.17", "location": "Vancouver, CA", "device": "lt-jchen", "mfa": "approved"}
+  ],
+  "k.lee": [
+    {"offset_minutes": -60, "result": "success", "app": "Outlook", "ip": "203.0.113.80", "location": "Seattle, US", "device": "lt-klee", "mfa": "approved"}
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "VEND-100": {
+    "vendor_id": "VEND-100",
+    "vendor_name": "Fabrikam Industrial Supply",
+    "contract_id": "MSA-FAB-2025",
+    "payment_terms": "Net 30; 2% discount if paid within 10 days",
+    "price_tolerance_pct": 2.0,
+    "freight_policy": "Freight is billable up to 75.00 per invoice.",
+    "max_freight": 75.00,
+    "billing_rule": "Bill received quantities only.",
+    "remit_to": "Fabrikam Industrial Supply, bank account ending 4417"
+  },
+  "VEND-200": {
+    "vendor_id": "VEND-200",
+    "vendor_name": "Northwind Packaging",
+    "contract_id": "MSA-NWP-2026",
+    "payment_terms": "Net 45",
+    "price_tolerance_pct": 2.0,
+    "freight_policy": "Prices are delivered (FOB destination). Freight is not billable.",
+    "max_freight": 0.00,
+    "billing_rule": "Bill received quantities only; back-ordered items are billed when delivered.",
+    "remit_to": "Northwind Packaging, bank account ending 9032"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AZURE_FUNCTIONS_AGENTS_PROVIDER": "foundry",
+    "FOUNDRY_PROJECT_ENDPOINT": "",
+    "FOUNDRY_MODEL": "gpt-5.4",
+    "HELPDESK_CONTAINER": "helpdesk",
+    "TEAMS_MCP_SERVER_URL": "",
+    "TEAMS_MCP_CLIENT_ID": "",
+    "TEAMS_TEAM_ID": "",
+    "TEAMS_CHANNEL_ID": ""
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AZURE_FUNCTIONS_AGENTS_PROVIDER": "foundry",
+    "FOUNDRY_PROJECT_ENDPOINT": "",
+    "FOUNDRY_MODEL": "gpt-5.4",
+    "AzureWebJobs.alert_router.Disabled": "true",
+    "EVENTHUB__fullyQualifiedNamespace": "<your-namespace>.servicebus.windows.net",
+    "EVENTHUB_NAME": "alerts",
+    "EVENTHUB_CONSUMER_GROUP": "local-dev",
+    "DECISION_ENDPOINT": "",
+    "DECISION_DEPLOYMENT": "decision-1",
+    "DECISION_MIN_CONFIDENCE": "0.5",
+    "DEDUPE_WINDOW_MINUTES": "60",
+    "INVESTIGATE_QUEUE": "alerts-investigate",
+    "REVIEW_QUEUE": "alerts-review",
+    "DECISIONS_TABLE": "alertdecisions",
+    "FINGERPRINTS_TABLE": "alertfingerprints",
+    "INVESTIGATIONS_CONTAINER": "investigations"
+  }
+}

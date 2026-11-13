@@ -1,0 +1,42 @@
+{
+  "apparel": {
+    "category": "apparel",
+    "return_window_days": 30,
+    "standard_conditions": [
+      "Item is unworn and unwashed with original tags attached.",
+      "Refund goes to the original payment method; exchanges for another size are free."
+    ],
+    "exceptions": [
+      {
+        "id": "APP-EX-1",
+        "rule": "Defective on arrival: if the customer reported the defect within 7 days of delivery, the item can be returned for replacement or refund up to 90 days after delivery. Requires human approval."
+      }
+    ],
+    "not_returnable": [
+      "Final sale items.",
+      "Underwear and swimwear with the hygiene seal removed."
+    ]
+  },
+  "outdoor_gear": {
+    "category": "outdoor_gear",
+    "return_window_days": 30,
+    "standard_conditions": [
+      "Item is unused and in its original packaging.",
+      "Refund goes to the original payment method."
+    ],
+    "exceptions": [
+      {
+        "id": "OG-EX-1",
+        "rule": "Damaged or defective on arrival: if the customer reported the damage within 7 days of delivery (support ticket, email, or chat), the item can be returned for replacement or refund up to 90 days after delivery. Requires human approval."
+      },
+      {
+        "id": "OG-EX-2",
+        "rule": "Failures after use are handled as manufacturer warranty claims, not returns. Offer to open a warranty claim instead of a refund."
+      }
+    ],
+    "not_returnable": [
+      "Final sale items.",
+      "Fuel canisters and other hazardous materials once shipped."
+    ]
+  }
+}

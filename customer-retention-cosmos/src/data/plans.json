@@ -1,0 +1,42 @@
+{
+  "currency": "USD",
+  "plans": {
+    "starter": {
+      "name": "Starter",
+      "price_per_seat_month": 20,
+      "minimum_seats": 5,
+      "includes": ["Core analytics", "Email support", "Standard reports"]
+    },
+    "business": {
+      "name": "Business",
+      "price_per_seat_month": 30,
+      "minimum_seats": 25,
+      "includes": ["Everything in Starter", "SSO", "Scheduled exports", "Business-hours phone support"]
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "price_per_seat_month": 40,
+      "minimum_seats": 100,
+      "includes": ["Everything in Business", "Dedicated customer success manager", "99.9% SLA", "24x7 support", "Audit logs"]
+    }
+  },
+  "retention_policy": {
+    "max_discount_percent": {
+      "starter": 5,
+      "business": 15,
+      "enterprise": 20
+    },
+    "approval_required_above_discount_percent": 10,
+    "approval_required_above_offer_value": 10000,
+    "success_package": {
+      "description": "Two remote training sessions plus a 30-day adoption plan run by customer success.",
+      "value": 2500
+    },
+    "seat_rightsizing": "Reduce seats at renewal to match active users (never below the plan minimum). No discount; lowers the customer's bill and keeps the account.",
+    "rules": [
+      "Offers apply to the next renewal term only.",
+      "Never promise roadmap features, SLA credits, or contract changes in outreach.",
+      "Only one offer per account per usage snapshot."
+    ]
+  }
+}

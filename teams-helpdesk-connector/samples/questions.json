@@ -1,0 +1,34 @@
+{
+  "questions": [
+    {
+      "key": "vpn",
+      "from": "Avery Chen",
+      "text": "Hi IT, the VPN client says 'gateway unreachable' when I try to connect from my hotel. What should I do?",
+      "expected": ["answered"]
+    },
+    {
+      "key": "password",
+      "from": "Jordan Patel",
+      "text": "I forgot my password and I'm locked out of my laptop. How do I reset it?",
+      "expected": ["answered"]
+    },
+    {
+      "key": "software",
+      "from": "Sam Rivera",
+      "text": "Can I get Visio installed? I need it to draw network diagrams for the Q3 data center project.",
+      "expected": ["ticket_created"]
+    },
+    {
+      "key": "admin-rights",
+      "from": "Riley Morgan",
+      "text": "Please give me local admin rights on my laptop so I can install some developer tools myself.",
+      "expected": ["escalated"]
+    },
+    {
+      "key": "hardware",
+      "from": "Taylor Brooks",
+      "text": "My laptop screen started flickering green after I spilled coffee on the keyboard this morning.",
+      "expected": ["escalated"]
+    }
+  ]
+}
