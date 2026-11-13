@@ -107,3 +107,5 @@ output accountName string = foundryAccount.name
 output projectName string = foundryProject.name
 output projectEndpoint string = '${foundryAccount.properties.endpoints['AI Foundry API']}api/projects/${foundryProject.name}'
 output modelDeploymentName string = foundryModelDeployment.name
+output openAiEndpoint string = foundryAccount.properties.endpoints['OpenAI Language Model Instance API']
+output contentSafetyEndpoint string = foundryAccount.properties.endpoints['Content Safety']

@@ -7,6 +7,9 @@
     },
     "location": {
       "value": "${AZURE_LOCATION}"
+    },
+    "enableAiGateway": {
+      "value": "${ENABLE_AI_GATEWAY=false}"
     }
   }
 }

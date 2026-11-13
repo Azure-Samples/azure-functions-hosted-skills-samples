@@ -41,12 +41,16 @@ param foundryDeploymentCapacity int = 50
 @description('Principal ID of the user running azd. Used to grant access for local runs, policy seeding, and the demo script.')
 param principalId string = deployer().objectId
 
+@description('Route model calls through an API Management AI Gateway (Developer tier): token limits, prompt shields, and token metrics. Set with: azd env set ENABLE_AI_GATEWAY true')
+param enableAiGateway bool = false
+
 var abbrs = loadJsonContent('./abbreviations.json')
 var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
 var tags = { 'azd-env-name': environmentName }
 var functionAppName = '${abbrs.webSitesFunctions}expense-${resourceToken}'
 var foundryAccountName = 'cog-${resourceToken}'
 var foundryProjectName = '${foundryAccountName}-proj'
+var aiGatewayName = 'apim-expense-${resourceToken}'
 var deploymentStorageContainerName = 'app-package-${take(functionAppName, 32)}-${take(toLower(uniqueString(functionAppName, resourceToken)), 7)}'
 var requestsQueueName = 'expense-requests'
 var approvedQueueName = 'expense-approved'
@@ -140,6 +144,38 @@ module appServicePlan 'br/public:avm/res/web/serverfarm:0.1.1' = {
 
 var identityClientId = apiUserAssignedIdentity.outputs.clientId
 
+module aiGateway './app/ai-gateway.bicep' = if (enableAiGateway) {
+  name: 'aiGateway'
+  scope: rg
+  params: {
+    name: aiGatewayName
+    location: location
+    tags: tags
+    tenantId: tenant().tenantId
+    functionClientId: identityClientId
+    foundryAccountName: foundry.outputs.accountName
+    foundryOpenAiEndpoint: foundry.outputs.openAiEndpoint
+    contentSafetyEndpoint: foundry.outputs.contentSafetyEndpoint
+    applicationInsightsName: monitoring.outputs.name
+    modelDeploymentName: foundry.outputs.modelDeploymentName
+  }
+}
+
+var modelSettings = {
+  AZURE_FUNCTIONS_AGENTS_PROVIDER: 'foundry'
+  FOUNDRY_PROJECT_ENDPOINT: foundry.outputs.projectEndpoint
+  FOUNDRY_MODEL: foundry.outputs.modelDeploymentName
+}
+// With the gateway, the runtime uses its Azure OpenAI provider against the APIM URL
+// (it calls {AZURE_OPENAI_ENDPOINT}/openai/v1/responses with a managed identity token).
+var gatewayModelSettings = enableAiGateway
+  ? {
+      AZURE_FUNCTIONS_AGENTS_PROVIDER: 'azure_openai'
+      AZURE_OPENAI_ENDPOINT: aiGateway!.outputs.gatewayUrl
+      AZURE_OPENAI_DEPLOYMENT: foundry.outputs.modelDeploymentName
+    }
+  : {}
+
 module api './app/api.bicep' = {
   name: 'api'
   scope: rg
@@ -162,16 +198,13 @@ module api './app/api.bicep' = {
     identityClientId: identityClientId
     // The queue trigger and the tools use the AzureWebJobsStorage__* identity-based
     // settings that api.bicep adds, so no extra connection settings are needed.
-    appSettings: {
-      AZURE_FUNCTIONS_AGENTS_PROVIDER: 'foundry'
-      FOUNDRY_PROJECT_ENDPOINT: foundry.outputs.projectEndpoint
-      FOUNDRY_MODEL: foundry.outputs.modelDeploymentName
+    appSettings: union(modelSettings, gatewayModelSettings, {
       AZURE_CLIENT_ID: identityClientId
       POLICIES_CONTAINER: policiesContainerName
       DECISIONS_CONTAINER: decisionsContainerName
       ENABLE_MULTIPLATFORM_BUILD: 'true'
       PYTHON_ENABLE_INIT_INDEXING: '1'
-    }
+    })
   }
 }
 
@@ -218,3 +251,6 @@ output POLICIES_CONTAINER string = policiesContainerName
 output DECISIONS_CONTAINER string = decisionsContainerName
 output FOUNDRY_PROJECT_ENDPOINT string = foundry.outputs.projectEndpoint
 output FOUNDRY_MODEL string = foundry.outputs.modelDeploymentName
+output AI_GATEWAY_ENABLED bool = enableAiGateway
+output AI_GATEWAY_NAME string = enableAiGateway ? aiGateway!.outputs.name : ''
+output AI_GATEWAY_URL string = enableAiGateway ? aiGateway!.outputs.gatewayUrl : ''
