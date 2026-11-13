@@ -16,6 +16,10 @@ Pick a scenario, deploy it, send the sample events, and read what the skill deci
 | [`claims-review-workflow`](claims-review-workflow) | Plan and run parallel checks for an insurance claim | Blob + Dynamic Workflows (Durable Task Scheduler) | ✅ Available |
 | [`alert-investigation-eventhub`](alert-investigation-eventhub) | Investigate only the security alerts that rules can't settle | Event Hubs → Microsoft-Decision-1 → queue | ✅ Available |
 | [`teams-helpdesk-connector`](teams-helpdesk-connector) | Answer helpdesk questions posted in a Teams channel | Connector (Teams) + HTTP test | ✅ Available |
+| [`record-repair-servicebus`](record-repair-servicebus) | Add AI to an existing ingestion pipeline: repair malformed records from the dead-letter queue and requeue them through the original function | Service Bus dead-letter queue | ✅ Available |
+| [`expense-policy-queue`](expense-policy-queue) | Route free-form expense requests by the policy documents stored in Blob; edit one policy and only that category reroutes | Storage queue | ✅ Available |
+
+The last two templates are simplified versions of the Hosted Skills team's demos [hosted-skills-delivery-recovery](https://github.com/greenie-msft/hosted-skills-delivery-recovery) and [hosted-skills-expense-processor](https://github.com/Azure-Samples/hosted-skills-expense-processor).
 
 ## Quickstart
 
