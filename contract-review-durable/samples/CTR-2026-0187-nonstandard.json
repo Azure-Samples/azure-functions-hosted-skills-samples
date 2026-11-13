@@ -1,0 +1,43 @@
+{
+  "contract_id": "CTR-2026-0187",
+  "title": "Northwind Data Services Master Services Agreement",
+  "contract_type": "master_services",
+  "counterparty": "Northwind Data Services LLC",
+  "business_owner": "priya.nair@contoso.com",
+  "effective_date": "2026-09-01",
+  "term_months": 36,
+  "annual_value": 210000,
+  "currency": "USD",
+  "clauses": [
+    {
+      "section": "3",
+      "heading": "Payment",
+      "text": "Customer will pay each invoice within fifteen (15) days of the invoice date. Late payments accrue interest at 2% per month."
+    },
+    {
+      "section": "6",
+      "heading": "Term and Termination",
+      "text": "This Agreement has an initial term of thirty-six (36) months. Either party may terminate for material breach that remains uncured for thirty (30) days. There is no right to terminate for convenience, and fees paid are non-refundable."
+    },
+    {
+      "section": "11",
+      "heading": "Indemnification",
+      "text": "Customer will defend, indemnify, and hold harmless Vendor from any third-party claims arising out of Customer's use of the Services or Customer Data."
+    },
+    {
+      "section": "12",
+      "heading": "Limitation of Liability",
+      "text": "Vendor's aggregate liability for all claims, including claims arising from data security incidents, will not exceed the fees paid by Customer in the three (3) months preceding the claim. Customer's liability is not limited."
+    },
+    {
+      "section": "13",
+      "heading": "Customer Data",
+      "text": "Vendor will host and process Customer's employee and customer records, including personal data, to deliver the Services. Vendor will use commercially reasonable security measures."
+    },
+    {
+      "section": "18",
+      "heading": "Governing Law and Venue",
+      "text": "This Agreement is governed by the laws of the State of Texas, and the parties submit to the exclusive jurisdiction of the courts of Travis County, Texas."
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "AZURE_FUNCTIONS_AGENTS_PROVIDER": "foundry",
+    "FOUNDRY_PROJECT_ENDPOINT": "",
+    "FOUNDRY_MODEL": "gpt-5.4",
+    "BRIEFING_SCHEDULE": "0 0 13 * * 1-5",
+    "BRIEFING_TIMEZONE": "America/New_York",
+    "BRIEFINGS_CONTAINER": "briefings",
+    "O365_MCP_SERVER_URL": "",
+    "O365_MCP_CLIENT_ID": ""
+  }
+}

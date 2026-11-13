@@ -1,0 +1,10 @@
+{
+  "contract_id": "CTR-2026-0203",
+  "title": "Unsigned order form",
+  "contract_type": "purchase_order_terms",
+  "counterparty": "",
+  "effective_date": "2026-13-45",
+  "annual_value": -500,
+  "currency": "USD",
+  "clauses": []
+}

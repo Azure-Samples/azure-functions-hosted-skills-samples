@@ -1,0 +1,9 @@
+{
+  "limitation_of_liability": "Except for breaches of Confidentiality, breaches of Data Protection obligations, and amounts payable under Indemnification, each party's total liability arising out of this Agreement will not exceed the fees paid or payable by Customer in the twelve (12) months preceding the event giving rise to the claim.",
+  "payment_terms": "Customer will pay undisputed amounts within forty-five (45) days after receipt of a correct invoice.",
+  "termination": "Customer may terminate this Agreement for convenience on thirty (30) days' written notice. Vendor will refund any prepaid fees for the period after the effective date of termination.",
+  "auto_renewal": "This Agreement renews for successive one-year terms unless Customer gives notice of non-renewal at least thirty (30) days before the end of the then-current term. Renewal fees will not increase by more than five percent (5%) over the prior term.",
+  "indemnification": "Each party will defend and indemnify the other against third-party claims arising from its breach of this Agreement. Vendor will defend and indemnify Customer against any third-party claim that the Services infringe intellectual property rights.",
+  "governing_law": "This Agreement is governed by the laws of the State of Washington, without regard to its conflict of laws rules. The state and federal courts in King County, Washington have exclusive jurisdiction.",
+  "data_protection": "To the extent Vendor processes Personal Data on behalf of Customer, the Data Processing Addendum attached as Exhibit B applies. Vendor will notify Customer of any Personal Data breach without undue delay and in any event within seventy-two (72) hours."
+}

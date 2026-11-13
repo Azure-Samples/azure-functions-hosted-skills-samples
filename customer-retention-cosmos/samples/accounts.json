@@ -1,0 +1,50 @@
+[
+  {
+    "id": "ACC-1001",
+    "name": "Fabrikam Health",
+    "industry": "Healthcare",
+    "tier": "enterprise",
+    "seats": 400,
+    "annual_contract_value": 192000,
+    "renewal_in_days": 45,
+    "csm_owner": "Priya Raman",
+    "primary_contact": {"name": "Dana Whitfield", "title": "Director of Clinical Operations", "email": "dana.whitfield@fabrikam.example"},
+    "usage": {"active_users_30d": 348, "baseline_active_users": 355, "weekly_sessions": 4100}
+  },
+  {
+    "id": "ACC-1002",
+    "name": "Northwind Traders",
+    "industry": "Wholesale distribution",
+    "tier": "business",
+    "seats": 80,
+    "annual_contract_value": 28800,
+    "renewal_in_days": 21,
+    "csm_owner": "Marcus Lee",
+    "primary_contact": {"name": "Ana Souza", "title": "Operations Manager", "email": "ana.souza@northwind.example"},
+    "usage": {"active_users_30d": 68, "baseline_active_users": 70, "weekly_sessions": 720}
+  },
+  {
+    "id": "ACC-1003",
+    "name": "Tailspin Toys",
+    "industry": "Retail",
+    "tier": "starter",
+    "seats": 15,
+    "annual_contract_value": 3600,
+    "renewal_in_days": 210,
+    "csm_owner": "Marcus Lee",
+    "primary_contact": {"name": "Kenji Ito", "title": "Founder", "email": "kenji@tailspin.example"},
+    "usage": {"active_users_30d": 12, "baseline_active_users": 12, "weekly_sessions": 150}
+  },
+  {
+    "id": "ACC-1004",
+    "name": "Woodgrove Bank",
+    "industry": "Financial services",
+    "tier": "enterprise",
+    "seats": 1000,
+    "annual_contract_value": 480000,
+    "renewal_in_days": 160,
+    "csm_owner": "Priya Raman",
+    "primary_contact": {"name": "Olivia Grant", "title": "VP, Risk Analytics", "email": "olivia.grant@woodgrove.example"},
+    "usage": {"active_users_30d": 925, "baseline_active_users": 900, "weekly_sessions": 11800}
+  }
+]

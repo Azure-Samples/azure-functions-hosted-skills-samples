@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "teams": {
+      "type": "http",
+      "url": "$TEAMS_MCP_SERVER_URL",
+      "auth": {
+        "scope": "https://apihub.azure.com/.default",
+        "client_id": "$TEAMS_MCP_CLIENT_ID"
+      }
+    }
+  }
+}

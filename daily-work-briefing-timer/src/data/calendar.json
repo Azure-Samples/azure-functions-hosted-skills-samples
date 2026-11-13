@@ -1,0 +1,69 @@
+{
+  "owner": "Alex Rivera, Product Manager, Contoso Payments",
+  "events": [
+    {
+      "id": "CAL-1",
+      "start": "09:00",
+      "end": "09:15",
+      "title": "Team Phoenix standup",
+      "organizer": "alex.rivera@contoso.com",
+      "attendees": ["Team Phoenix"],
+      "location": "Teams",
+      "notes": ""
+    },
+    {
+      "id": "CAL-2",
+      "start": "10:00",
+      "end": "11:00",
+      "title": "Q3 roadmap review with Dana (VP Product)",
+      "organizer": "dana.whitfield@contoso.com",
+      "attendees": ["Dana Whitfield", "Alex Rivera", "Engineering leads"],
+      "location": "Building 4 / Teams",
+      "notes": "Decision needed: cut or defer the multi-currency payouts feature. Bring the cost estimate.",
+      "related_task_ids": ["TASK-1"]
+    },
+    {
+      "id": "CAL-3",
+      "start": "12:00",
+      "end": "12:30",
+      "title": "1:1 with Priya",
+      "organizer": "priya.nair@contoso.com",
+      "attendees": ["Priya Nair", "Alex Rivera"],
+      "location": "Teams",
+      "notes": ""
+    },
+    {
+      "id": "CAL-4",
+      "start": "13:00",
+      "end": "13:45",
+      "title": "Fabrikam escalation call",
+      "organizer": "jordan.lee@fabrikam.com",
+      "attendees": ["Jordan Lee (Fabrikam)", "Alex Rivera", "Sam Ortiz (Support)"],
+      "location": "Teams",
+      "notes": "Fabrikam wants the root cause of Tuesday's payment API outage and a remediation date.",
+      "related_task_ids": ["TASK-2"],
+      "related_message_ids": ["MSG-1"]
+    },
+    {
+      "id": "CAL-5",
+      "start": "15:30",
+      "end": "16:15",
+      "title": "Interview: Senior Software Engineer (loop 3 of 4)",
+      "organizer": "recruiting@contoso.com",
+      "attendees": ["Candidate: M. Chen", "Alex Rivera"],
+      "location": "Teams",
+      "notes": "Focus area: product sense. Feedback form due the same day.",
+      "related_task_ids": ["TASK-3"]
+    },
+    {
+      "id": "CAL-6",
+      "start": "16:00",
+      "end": "16:30",
+      "title": "FY27 budget sync",
+      "organizer": "finance@contoso.com",
+      "attendees": ["Finance", "Product managers"],
+      "location": "Building 2, Room 210",
+      "notes": "Optional for PMs; send numbers in advance if you can't attend."
+    }
+  ]
+}

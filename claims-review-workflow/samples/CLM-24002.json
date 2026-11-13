@@ -1,0 +1,15 @@
+{
+  "claim_id": "CLM-24002",
+  "policy_number": "POL-H-2001",
+  "claim_type": "home_water_damage",
+  "claimant": { "name": "Priya Raman", "email": "priya.raman@example.com" },
+  "incident_date": "2026-10-19",
+  "reported_date": "2026-10-21",
+  "amount_claimed": 7800.00,
+  "currency": "USD",
+  "description": "A supply line under the kitchen sink burst overnight. Water damaged the kitchen floor and the cabinets below the sink.",
+  "documents": [
+    { "type": "repair_estimate", "file": "CLM-24002/remediation-estimate.txt" },
+    { "type": "photos", "file": "CLM-24002/photos.txt" }
+  ]
+}

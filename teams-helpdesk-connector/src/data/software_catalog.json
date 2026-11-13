@@ -1,0 +1,58 @@
+{
+  "software": [
+    {
+      "id": "SW-VSCODE",
+      "name": "Visual Studio Code",
+      "aliases": ["vs code", "vscode", "code editor"],
+      "status": "approved",
+      "license": "free",
+      "approval": "none",
+      "fulfillment": "Self-service in Company Portal"
+    },
+    {
+      "id": "SW-ADOBE-ACROBAT-PRO",
+      "name": "Adobe Acrobat Pro",
+      "aliases": ["acrobat", "acrobat pro", "adobe pro", "pdf editor"],
+      "status": "approved",
+      "license": "paid",
+      "approval": "manager",
+      "fulfillment": "Installed by IT through Company Portal after manager approval"
+    },
+    {
+      "id": "SW-VISIO",
+      "name": "Microsoft Visio Plan 2",
+      "aliases": ["visio"],
+      "status": "approved",
+      "license": "paid",
+      "approval": "manager",
+      "fulfillment": "License assigned by IT after manager approval"
+    },
+    {
+      "id": "SW-POWERBI-PRO",
+      "name": "Power BI Pro",
+      "aliases": ["power bi", "powerbi"],
+      "status": "approved",
+      "license": "paid",
+      "approval": "manager",
+      "fulfillment": "License assigned by IT after manager approval"
+    },
+    {
+      "id": "SW-DOCKER-DESKTOP",
+      "name": "Docker Desktop",
+      "aliases": ["docker"],
+      "status": "approved",
+      "license": "paid",
+      "approval": "manager",
+      "fulfillment": "Installed by IT through Company Portal after manager approval"
+    },
+    {
+      "id": "SW-WINRAR",
+      "name": "WinRAR",
+      "aliases": ["winrar", "rar"],
+      "status": "not_approved",
+      "license": "paid",
+      "approval": "none",
+      "fulfillment": "Not approved. Use the built-in Windows archive support or 7-Zip from Company Portal."
+    }
+  ]
+}

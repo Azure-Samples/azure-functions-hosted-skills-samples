@@ -1,0 +1,15 @@
+{
+  "claim_id": "CLM-24001",
+  "policy_number": "POL-A-1001",
+  "claim_type": "auto_collision",
+  "claimant": { "name": "Jordan Lee", "email": "jordan.lee@example.com" },
+  "incident_date": "2026-10-28",
+  "reported_date": "2026-10-29",
+  "amount_claimed": 3200.00,
+  "currency": "USD",
+  "description": "Rear-ended at a stop light on Main St. Rear bumper and trunk lid damaged. Other driver's insurer details exchanged at the scene.",
+  "documents": [
+    { "type": "repair_estimate", "file": "CLM-24001/repair-estimate.txt" },
+    { "type": "photos", "file": "CLM-24001/photos.txt" }
+  ]
+}

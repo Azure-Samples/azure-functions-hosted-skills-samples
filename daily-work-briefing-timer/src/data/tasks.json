@@ -1,0 +1,52 @@
+{
+  "tasks": [
+    {
+      "id": "TASK-1",
+      "title": "Finalize Q3 roadmap deck (add multi-currency cost estimate)",
+      "due_in_days": 0,
+      "priority": "high",
+      "status": "in_progress",
+      "related_event_ids": ["CAL-2"]
+    },
+    {
+      "id": "TASK-2",
+      "title": "Send outage root cause analysis (RCA) to Fabrikam",
+      "due_in_days": -1,
+      "priority": "high",
+      "status": "not_started",
+      "related_event_ids": ["CAL-4"]
+    },
+    {
+      "id": "TASK-3",
+      "title": "Submit interview feedback for M. Chen",
+      "due_in_days": 0,
+      "priority": "medium",
+      "status": "not_started",
+      "related_event_ids": ["CAL-5"]
+    },
+    {
+      "id": "TASK-4",
+      "title": "Review pricing service API spec",
+      "due_in_days": 2,
+      "priority": "medium",
+      "status": "not_started",
+      "related_event_ids": []
+    },
+    {
+      "id": "TASK-5",
+      "title": "File October expense report",
+      "due_in_days": 6,
+      "priority": "low",
+      "status": "not_started",
+      "related_event_ids": []
+    },
+    {
+      "id": "TASK-6",
+      "title": "Publish release notes for payouts v2.3",
+      "due_in_days": -3,
+      "priority": "medium",
+      "status": "done",
+      "related_event_ids": []
+    }
+  ]
+}

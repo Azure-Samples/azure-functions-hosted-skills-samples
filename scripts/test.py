@@ -5,6 +5,7 @@ Usage (from the repository root):
     python scripts/test.py                                  # static + unit for every template
     python scripts/test.py --template customer-returns-queue --level local
     python scripts/test.py --template customer-returns-queue --level deploy [--down]
+    python scripts/test.py --template claims-review-workflow --level local --port 7072
 
 Levels are cumulative:
 
@@ -50,7 +51,8 @@ if not specs:
 tools = discover_project_tools(src)
 if tools.failed_loads:
     sys.exit(f"tool load failures: {tools.failed_loads}")
-names = [Path(s.source_file).name.split(".")[0] for s in specs]
+# Endpoint-less hosted skills (no trigger) are called from code and do not register a function.
+names = [Path(s.source_file).name.split(".")[0] for s in specs if s.trigger is not None]
 print(json.dumps({"functions": names, "tools": sorted(t.name for t in tools.user_tools)}))
 """
 
@@ -137,6 +139,9 @@ def local(template: Path, python: Path, functions: list[str], port: int = 7071, 
     if not (_port_open(10000) and _port_open(10001)):
         raise StepFailed("Azurite is not running on ports 10000-10002 (start it with `azurite` or Docker)")
     src = template / "src"
+    if "localhost:8080" in (src / "local.settings.json.sample").read_text(encoding="utf-8") and not _port_open(8080):
+        raise StepFailed("Durable Task Scheduler emulator is not running on port 8080 "
+                         "(docker run -d -p 8080:8080 -p 8082:8082 mcr.microsoft.com/dts/dts-emulator:latest)")
     settings = src / "local.settings.json"
     if not settings.exists():
         shutil.copy(src / "local.settings.json.sample", settings)
@@ -195,6 +200,7 @@ def main() -> int:
     parser.add_argument("--template", action="append", help="Template folder name. Repeatable. Default: all.")
     parser.add_argument("--level", choices=LEVELS, default="unit")
     parser.add_argument("--down", action="store_true", help="Run azd down after the deploy level.")
+    parser.add_argument("--port", type=int, default=7071, help="Local Functions host port for the local level.")
     args = parser.parse_args()
 
     templates = discover_templates()
@@ -215,7 +221,7 @@ def main() -> int:
             if depth >= 1:
                 unit(template, python)
             if depth >= 2:
-                local(template, python, functions)
+                local(template, python, functions, port=args.port)
             if depth >= 3:
                 deploy(template, python, args.down)
         except StepFailed as exc:

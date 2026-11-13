@@ -1,0 +1,6 @@
+azurefunctions-agents-runtime[monitor]>=0.1.0b17
+azure-functions
+azure-identity
+azure-storage-blob
+azure-storage-queue
+azure-data-tables

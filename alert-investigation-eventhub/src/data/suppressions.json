@@ -1,0 +1,20 @@
+[
+  {
+    "id": "SUP-001",
+    "rule_id": "NET-PORT-SCAN",
+    "host": "scan-01",
+    "reason": "Authorized weekly vulnerability scan (change CHG-4471)."
+  },
+  {
+    "id": "SUP-002",
+    "rule_id": "EDR-PUA-TOOL",
+    "asset_tag": "authorized-scanner",
+    "reason": "Scanning tools are expected on authorized scanner hosts."
+  },
+  {
+    "id": "SUP-003",
+    "rule_id": "IDP-LEGACY-AUTH-BLOCKED",
+    "user": "svc-printer",
+    "reason": "Known printer service account; legacy auth is blocked by policy and tracked in PRB-0192."
+  }
+]

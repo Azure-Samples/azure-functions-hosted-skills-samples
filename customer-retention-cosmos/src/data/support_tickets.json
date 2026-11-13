@@ -1,0 +1,15 @@
+{
+  "ACC-1001": [
+    {"ticket_id": "SUP-7712", "opened_days_ago": 12, "status": "open", "severity": "sev2", "subject": "SSO sign-in fails for clinicians after identity provider migration", "summary": "Since Fabrikam moved to a new identity provider, about half of clinic staff get an error on sign-in. Workaround (password login) is blocked by their security policy. Engineering fix scheduled, no date yet."},
+    {"ticket_id": "SUP-7690", "opened_days_ago": 20, "status": "open", "severity": "sev3", "subject": "Weekly utilization export times out", "summary": "Scheduled export of the weekly utilization report times out for the full organization."},
+    {"ticket_id": "SUP-7421", "opened_days_ago": 95, "status": "closed", "severity": "sev4", "subject": "Request: dashboard training for new department heads", "summary": "Shared recorded training. Customer asked for a live session next quarter."}
+  ],
+  "ACC-1002": [
+    {"ticket_id": "SUP-7735", "opened_days_ago": 9, "status": "closed", "severity": "sev4", "subject": "How do we remove seats before renewal?", "summary": "Operations manager asked how to reduce seats from 80. Explained seat changes take effect at renewal."},
+    {"ticket_id": "SUP-7702", "opened_days_ago": 18, "status": "closed", "severity": "sev4", "subject": "Billing question: comparing quotes", "summary": "Customer said a competitor quoted about 30% less per seat and asked whether we price-match."}
+  ],
+  "ACC-1003": [
+    {"ticket_id": "SUP-7650", "opened_days_ago": 30, "status": "closed", "severity": "sev4", "subject": "Change billing email", "summary": "Updated the billing contact."}
+  ],
+  "ACC-1004": []
+}

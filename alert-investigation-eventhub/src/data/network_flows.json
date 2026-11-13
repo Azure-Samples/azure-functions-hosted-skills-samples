@@ -1,0 +1,14 @@
+{
+  "fin-ws-22": [
+    {"offset_minutes": -18, "direction": "outbound", "remote_ip": "185.220.101.47", "remote_port": 80, "protocol": "HTTP", "bytes_out": 1240, "bytes_in": 412800, "process": "powershell.exe"},
+    {"offset_minutes": -16, "direction": "outbound", "remote_ip": "185.220.101.47", "remote_port": 443, "protocol": "TLS", "bytes_out": 3100, "bytes_in": 2200, "process": "rundll32.exe", "note": "Beacon every 60 seconds since this time."},
+    {"offset_minutes": -12, "direction": "outbound", "remote_ip": "185.220.101.47", "remote_port": 443, "protocol": "TLS", "bytes_out": 48200000, "bytes_in": 9100, "process": "rundll32.exe", "note": "Large upload before encryption started."},
+    {"offset_minutes": -8, "direction": "internal", "remote_ip": "10.20.8.15", "remote_host": "fs-02", "remote_port": 445, "protocol": "SMB", "bytes_out": 912000000, "bytes_in": 905000000, "process": "rundll32.exe", "note": "High-rate writes to \\\\fs-02\\finance."}
+  ],
+  "lt-apatel": [
+    {"offset_minutes": -300, "direction": "outbound", "remote_ip": "20.190.151.68", "remote_port": 443, "protocol": "TLS", "bytes_out": 52000, "bytes_in": 410000, "process": "Microsoft Edge", "note": "login.microsoftonline.com"}
+  ],
+  "scan-01": [
+    {"offset_minutes": -15, "direction": "internal", "remote_ip": "10.20.0.0/16", "remote_port": 0, "protocol": "TCP SYN", "bytes_out": 2100000, "bytes_in": 640000, "process": "nmap", "note": "Scheduled scan."}
+  ]
+}

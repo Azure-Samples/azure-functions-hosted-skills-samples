@@ -10,12 +10,12 @@ Pick a scenario, deploy it, send the sample events, and read what the skill deci
 |---|---|---|---|
 | [`customer-returns-queue`](customer-returns-queue) | Triage return requests that don't fit the policy and recommend approve / exception / decline / escalate | Storage queue or Service Bus | ✅ Available |
 | [`invoice-review-blob`](invoice-review-blob) | Check uploaded invoice PDFs against purchase orders, receipts, and contract terms, and hold or reject the ones that don't match | Blob (Event Grid) | ✅ Available |
-| `contract-review-durable` | Add an AI clause review step to an existing Durable Functions workflow | HTTP from Durable orchestration | Coming soon |
-| `daily-work-briefing-timer` | Send a daily summary of mail, meetings, and chats | Timer | Coming soon |
-| `customer-retention-cosmos` | Write a retention report when an account's usage drops | Cosmos DB change feed | Coming soon |
-| `claims-review-workflow` | Plan and run parallel checks for an insurance claim | Blob + Dynamic Workflows (Durable Task Scheduler) | Coming soon |
-| `alert-investigation-eventhub` | Investigate only the security alerts that rules can't settle | Event Hubs → queue (Durable Task Scheduler) | Coming soon |
-| `teams-helpdesk-connector` | Answer helpdesk questions posted in a Teams channel | Connector (Teams) | Coming soon |
+| [`contract-review-durable`](contract-review-durable) | Add an AI clause review step to an existing Durable Functions workflow | HTTP from Durable orchestration | ✅ Available |
+| [`daily-work-briefing-timer`](daily-work-briefing-timer) | Send a daily summary of mail, meetings, and chats | Timer | ✅ Available |
+| [`customer-retention-cosmos`](customer-retention-cosmos) | Write a retention report when an account's usage drops | Cosmos DB change feed | ✅ Available |
+| [`claims-review-workflow`](claims-review-workflow) | Plan and run parallel checks for an insurance claim | Blob + Dynamic Workflows (Durable Task Scheduler) | ✅ Available |
+| [`alert-investigation-eventhub`](alert-investigation-eventhub) | Investigate only the security alerts that rules can't settle | Event Hubs → Microsoft-Decision-1 → queue | ✅ Available |
+| [`teams-helpdesk-connector`](teams-helpdesk-connector) | Answer helpdesk questions posted in a Teams channel | Connector (Teams) + HTTP test | ✅ Available |
 
 ## Quickstart
 
@@ -42,7 +42,8 @@ One command runs the checks for every template:
 
 ```bash
 python scripts/test.py                     # static: Bicep build + skill/tool loading; unit: pytest
-python scripts/test.py --level local       # + func start against Azurite
+python scripts/test.py --level local       # + func start against Azurite (and the DTS emulator for Durable templates)
+python scripts/test.py --template claims-review-workflow --level local --port 7072  # pick another host port
 python scripts/test.py --template customer-returns-queue --level deploy --down  # + azd up, e2e, azd down
 ```
 
