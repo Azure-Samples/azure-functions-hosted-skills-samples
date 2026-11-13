@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Record rules shared by the ``ingest`` function and the repair tools.
 
 Everything here is deterministic. The ingest function uses it to accept or reject a record,

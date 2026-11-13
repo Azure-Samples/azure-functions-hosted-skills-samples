@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Upload sample insurance claims and read the decisions the workflow records.
 
 Usage (from the template folder):

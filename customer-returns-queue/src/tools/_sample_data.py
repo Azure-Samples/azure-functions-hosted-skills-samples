@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Shared loader for the sample business data in ``src/data``.
 
 Files whose names start with ``_`` are not registered as tools, so the tool

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Workflow tool: look up prior claims and fraud signals for the policyholder."""
 
 from typing import Any

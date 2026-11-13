@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Route a batch of alerts: rules first, Microsoft-Decision-1 for the rest, fail safe always.
 
 Every alert ends in exactly one place:

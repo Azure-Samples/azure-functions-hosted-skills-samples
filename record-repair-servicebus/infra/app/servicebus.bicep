@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 param namespaceName string
 @description('Queues to create. The app listens on the first one; the others are for local runs.')
 param queueNames array

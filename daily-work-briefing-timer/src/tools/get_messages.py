@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Unread and important messages for the briefing owner."""
 
 from __future__ import annotations

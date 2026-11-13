@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Approved standard clause language, used to draft suggested redlines."""
 
 from typing import Any

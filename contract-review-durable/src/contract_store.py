@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Blob Storage records for legal review tasks and final decisions.
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite), or

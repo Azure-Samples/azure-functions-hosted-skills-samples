@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Stage 1 of the alert pipeline: deterministic rules and Microsoft-Decision-1 routing.
 
 The Event Hubs function in ``function_app.py`` calls :func:`router.route_batch` for every

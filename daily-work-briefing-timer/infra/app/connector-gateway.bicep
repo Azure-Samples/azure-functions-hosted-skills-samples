@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 // Optional (enableOffice365=true): an Office 365 Outlook connection behind a Connector Gateway,
 // exposed to the hosted skill as a read-only MCP server with two operations:
 // GetEventsCalendarViewV3 (today's meetings) and GetEmailsV3 (unread mail).

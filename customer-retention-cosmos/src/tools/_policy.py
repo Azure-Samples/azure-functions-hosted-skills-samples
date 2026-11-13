@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Churn signals and retention offer policy, computed in code.
 
 The hosted skill interprets these results; it never does the math or sets the limits.

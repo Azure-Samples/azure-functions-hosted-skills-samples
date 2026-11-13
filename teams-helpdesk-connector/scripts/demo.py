@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Send sample IT questions to the helpdesk HTTP test endpoint and check the records.
 
 Usage (from the template folder):

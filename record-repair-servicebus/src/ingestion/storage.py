@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Blob Storage output for the pipeline.
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite), or the

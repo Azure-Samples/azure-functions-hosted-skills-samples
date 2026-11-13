@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Records the hosted skill's retention action for the customer success team.
 
 This tool only stores a draft. Nothing is emailed and no price changes: a person reviews

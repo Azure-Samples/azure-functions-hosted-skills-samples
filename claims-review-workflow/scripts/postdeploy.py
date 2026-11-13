@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """azd postdeploy hook: subscribe the function's blob trigger to Event Grid.
 
 On Flex Consumption, blob triggers use Event Grid. The webhook needs the function

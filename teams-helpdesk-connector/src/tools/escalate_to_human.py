@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Escalates a question to the human IT service desk queue.
 
 The sample records the escalation as ``escalations/<message_id>.json`` in Blob

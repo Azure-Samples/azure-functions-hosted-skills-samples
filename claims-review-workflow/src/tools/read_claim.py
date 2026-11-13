@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Read the uploaded claim form and short excerpts of its supporting documents."""
 
 from typing import Any

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Start contract reviews, approve them, and check their decisions.
 
 Usage (from the template folder):

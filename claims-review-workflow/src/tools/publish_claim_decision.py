@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Workflow tool: apply the decision rule and record the claim decision (terminal step)."""
 
 from datetime import UTC, datetime

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Upload sample invoices and read the hosted skill's reviews.
 
 Usage (from the template folder):

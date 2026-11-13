@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Plan and pricing catalog with the retention offer policy, backed by sample data."""
 
 from typing import Any

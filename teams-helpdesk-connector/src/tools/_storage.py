@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Blob Storage records for helpdesk replies, tickets, and escalations.
 
 Everything lives in one container (``HELPDESK_CONTAINER``) under ``replies/``,

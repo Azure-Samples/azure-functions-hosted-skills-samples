@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """The contract review orchestration: validate, review with the hosted skill, route, record.
 
 This is a plain generator so it can be unit-tested with a fake context; function_app.py

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Function app: the existing ``ingest`` function plus the ``record_repair`` hosted skill.
 
 ``create_function_app()`` registers every ``*.agent.md`` hosted skill in this folder. ``ingest``

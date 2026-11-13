@@ -225,9 +225,9 @@ The outputs below are real, from `demo.py e2e` against an app with the gateway e
 The function app points at the gateway:
 
 ```text
-$ az functionapp config appsettings list -g rg-hs-expense -n func-expense-2wcgfjoz67lko ...
+$ az functionapp config appsettings list -g rg-<env> -n func-expense-<token> ...
 AZURE_FUNCTIONS_AGENTS_PROVIDER  azure_openai
-AZURE_OPENAI_ENDPOINT            https://apim-expense-2wcgfjoz67lko.azure-api.net
+AZURE_OPENAI_ENDPOINT            https://apim-expense-<token>.azure-api.net
 AZURE_OPENAI_DEPLOYMENT          gpt-5.4
 ```
 
@@ -241,7 +241,7 @@ requests
 
 ```text
 cloud_RoleName                        name                       resultCode  calls  ok
-apim-expense-2wcgfjoz67lko East US 2  POST /openai/v1/responses  200         24     24
+apim-expense-<token> East US 2  POST /openai/v1/responses  200         24     24
 ```
 
 Token metrics emitted by `llm-emit-token-metric`:

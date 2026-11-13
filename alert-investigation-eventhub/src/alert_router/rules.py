@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Deterministic alert rules: validation, suppression, fingerprints, grouping, and state.
 
 Everything here is pure Python with no I/O so it is cheap to run on every event and easy

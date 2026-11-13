@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Open tasks and follow-ups, with due dates and overdue status computed in code."""
 
 from __future__ import annotations

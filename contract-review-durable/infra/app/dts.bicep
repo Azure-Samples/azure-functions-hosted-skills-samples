@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 // Durable Task Scheduler: the managed backend that stores orchestration state for the
 // contract review process. The function app reaches it with its user-assigned managed identity.
 param schedulerName string

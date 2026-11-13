@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Turns the sample logs' relative offsets into timestamps around the alert time.
 
 The sample data stores ``offset_minutes`` relative to the alert so the story stays

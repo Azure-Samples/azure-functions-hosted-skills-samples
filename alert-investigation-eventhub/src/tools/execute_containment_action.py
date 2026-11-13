@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Containment guardrail: the hosted skill can never execute a containment action.
 
 Isolating hosts, disabling accounts, and blocking traffic are destructive. This tool

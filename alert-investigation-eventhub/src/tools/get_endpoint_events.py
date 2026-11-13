@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Endpoint detection and response (EDR) process and file event lookup backed by sample data."""
 
 from __future__ import annotations

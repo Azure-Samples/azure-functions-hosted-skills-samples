@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 // Connector gateway with a Microsoft Teams connection and an MCP server that exposes
 // exactly one action: reply in a thread of the configured channel.
 //

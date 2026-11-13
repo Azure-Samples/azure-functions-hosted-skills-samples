@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Lists the expense policy documents stored in the ``policies`` Blob container."""
 
 from typing import Any

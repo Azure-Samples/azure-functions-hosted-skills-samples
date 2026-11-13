@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Sends repaired records back to the ingestion queue with the Service Bus SDK.
 
 Uses the same ``ServiceBusConnection`` settings as the triggers: the managed identity in

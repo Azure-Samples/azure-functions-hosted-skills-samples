@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Records a dead-lettered message that could not be repaired, for a person to review.
 
 Writes ``repair-failures/<message id>.json`` once (``overwrite=False``), so a retried

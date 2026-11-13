@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Workflow tool: check that the documents required for the claim type were submitted."""
 
 from typing import Any

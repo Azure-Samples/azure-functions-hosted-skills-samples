@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Publishes the day's briefing to Blob Storage as Markdown and JSON, once per date.
 
 The date, file names, and rendering are decided in code, not by the model, so a

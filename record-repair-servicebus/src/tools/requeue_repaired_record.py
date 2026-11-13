@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Sends a format-repaired record back through the original ingest function.
 
 The skill never writes output itself. Every safety rule is enforced here in code, whatever

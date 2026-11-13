@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Shared loader for the sample helpdesk data in ``src/data``.
 
 Replace these lookups with your knowledge base (for example a SharePoint site or

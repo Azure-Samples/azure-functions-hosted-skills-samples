@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 param accountName string
 param projectName string
 param location string = resourceGroup().location

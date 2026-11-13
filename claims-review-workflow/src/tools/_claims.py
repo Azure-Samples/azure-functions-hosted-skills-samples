@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Blob Storage access for claim packages and claim decisions.
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite),

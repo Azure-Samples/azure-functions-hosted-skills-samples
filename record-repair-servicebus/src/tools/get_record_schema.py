@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Returns the record schema that the ingest function enforces.
 
 The schema is bundled with the app (``src/record-schema.json``), so the hosted skill always

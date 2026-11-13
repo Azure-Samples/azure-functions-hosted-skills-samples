@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Routes one expense decision to its output queue.
 
 The rules that must never depend on the model are enforced here, in code: the queue

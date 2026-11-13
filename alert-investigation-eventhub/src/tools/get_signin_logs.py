@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Identity provider sign-in log lookup backed by sample data."""
 
 from __future__ import annotations

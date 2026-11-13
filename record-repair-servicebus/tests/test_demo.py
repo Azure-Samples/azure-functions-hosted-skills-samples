@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 from demo import EXPECTED, load_samples, validate, with_fresh_id
 
 

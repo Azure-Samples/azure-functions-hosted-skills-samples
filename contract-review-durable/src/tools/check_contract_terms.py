@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Deterministic comparison of extracted contract terms with Contoso's playbook.
 
 The model reads the contract text and extracts the terms; this tool compares them with

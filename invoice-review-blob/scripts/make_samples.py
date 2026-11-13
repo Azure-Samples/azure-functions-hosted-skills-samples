@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Regenerate the sample invoice PDFs in ``samples/``.
 
 The PDFs are committed, so you only need this script if you edit an invoice below.

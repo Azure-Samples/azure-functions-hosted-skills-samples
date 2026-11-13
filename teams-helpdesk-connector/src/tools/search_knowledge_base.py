@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Searches the IT knowledge base.
 
 The sample searches ``src/data/kb_articles.json`` by keyword. In production, replace

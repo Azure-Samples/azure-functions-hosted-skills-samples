@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Threat intelligence lookup backed by sample data."""
 
 from __future__ import annotations

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Contract review: a Durable Functions process that uses a hosted skill for the judgment step.
 
 The hosted skill in ``contract_review.agent.md`` is registered by ``create_function_app()``.

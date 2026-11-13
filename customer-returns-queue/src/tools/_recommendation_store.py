@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Stores return recommendations in Azure Blob Storage.
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite),

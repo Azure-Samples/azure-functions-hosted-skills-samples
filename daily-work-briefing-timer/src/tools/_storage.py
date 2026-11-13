@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Blob Storage access for published briefings.
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite),

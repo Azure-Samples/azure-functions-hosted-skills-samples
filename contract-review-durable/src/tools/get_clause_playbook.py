@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Clause playbook lookup backed by sample data."""
 
 from typing import Any

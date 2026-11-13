@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Run the daily briefing now and read the published briefings.
 
 The skill normally runs on its timer. To test it without waiting, this script calls the

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Records the helpdesk reply for a Teams message, exactly once.
 
 Every reply is written to ``replies/<message_id>.json`` with ``overwrite=False``.

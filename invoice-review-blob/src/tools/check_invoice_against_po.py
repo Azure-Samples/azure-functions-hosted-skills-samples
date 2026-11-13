@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Three-way match: compares invoice lines with the purchase order, goods receipt, and contract.
 
 The comparison and all arithmetic run in code, so the model explains discrepancies

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Render a briefing document as Markdown. Deterministic, so reruns produce the same file."""
 
 from __future__ import annotations

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """azd postdeploy hook: connect the Teams "new channel message" trigger to the function.
 
 The connector gateway, Teams connection, and reply MCP server are deployed by Bicep.

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Today's calendar, with overlaps and free blocks computed in code."""
 
 from __future__ import annotations

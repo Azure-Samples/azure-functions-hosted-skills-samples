@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Send sample return requests and read the hosted skill's recommendations.
 
 Usage (from the template folder):

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Send sample records through the ingestion pipeline and see what happened to them.
 
 Usage (from the template folder):

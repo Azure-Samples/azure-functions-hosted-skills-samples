@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Seed customer accounts in Cosmos DB, change their usage, and read the retention actions.
 
 Usage (from the template folder):

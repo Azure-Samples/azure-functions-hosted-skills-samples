@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Creates a software request ticket for an approved application.
 
 Code-enforced rules:

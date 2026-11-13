@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Send a burst of sample alerts to Event Hubs and check how they were handled.
 
 Usage (from the template folder):

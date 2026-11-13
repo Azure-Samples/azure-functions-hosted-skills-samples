@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Deterministic claim checks and the decision rule.
 
 Pure functions with no Azure dependencies, so they are easy to unit test and the

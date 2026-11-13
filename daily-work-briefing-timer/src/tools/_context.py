@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Shared helpers for the briefing tools: sample data, the briefing clock, and data source.
 
 Replace the ``src/data`` reads with calls to your calendar, mail, and task systems, or

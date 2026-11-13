@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 param namespaceName string
 param queueName string
 param location string = resourceGroup().location

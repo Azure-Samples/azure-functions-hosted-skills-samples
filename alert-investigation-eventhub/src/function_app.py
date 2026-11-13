@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Function app: a code Event Hubs router (stage 1) plus the alert-investigator hosted skill (stage 2).
 
 ``create_function_app()`` registers every ``*.agent.md`` hosted skill in this folder. The

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Minimal client for the Microsoft-Decision-1 decision API in Microsoft Foundry.
 
 ``POST {resource endpoint}/providers/microsoft/v1/systemone`` with a ``state`` and typed

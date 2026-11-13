@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Records the hosted skill's invoice review for accounts payable.
 
 This tool only stores a recommendation. Payments, holds, and rejections stay in

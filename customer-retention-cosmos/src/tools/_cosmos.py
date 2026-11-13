@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Azure Cosmos DB access for account profiles and retention actions.
 
 Uses the same identity-based connection as the change feed trigger (``COSMOS__accountEndpoint``)

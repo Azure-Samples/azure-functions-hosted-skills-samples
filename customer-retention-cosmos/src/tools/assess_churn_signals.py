@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Churn risk signals computed in code from the live account and its support tickets."""
 
 from datetime import UTC, datetime

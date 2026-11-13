@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Workflow tool: check the claim against the policy's coverage."""
 
 from typing import Any

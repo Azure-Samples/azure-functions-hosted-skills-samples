@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Storage for the router: dedupe fingerprints and decisions (Table), work queues (Queue).
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite), or the

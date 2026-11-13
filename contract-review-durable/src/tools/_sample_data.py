@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Shared loader for the sample contract playbook in ``src/data``.
 
 Replace these lookups with your contract lifecycle management (CLM) system or the

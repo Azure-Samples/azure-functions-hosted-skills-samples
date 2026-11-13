@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Reads an uploaded invoice file and returns its fields or text.
 
 PDFs are read with Azure AI Document Intelligence's prebuilt invoice model when

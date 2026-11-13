@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Reads one expense policy document from the ``policies`` Blob container."""
 
 from typing import Any

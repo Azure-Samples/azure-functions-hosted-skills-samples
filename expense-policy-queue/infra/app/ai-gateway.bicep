@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 // Optional API Management AI Gateway (deployed only when ENABLE_AI_GATEWAY=true).
 // The function app authenticates with its user-assigned identity; APIM calls Foundry
 // and Content Safety with its own system-assigned identity. Policy: ai-gateway-policy.xml.

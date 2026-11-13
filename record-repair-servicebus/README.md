@@ -80,7 +80,7 @@ sent rec-valid-dd322a             {"record_id": "rec-valid-dd322a", "source": " 
 sent rec-renamed-dd322a           {"recordId": "rec-renamed-dd322a", "source": " Partner Feed ", "value": "21.5"}
 sent rec-casing-dd322a            {"record_id": "rec-casing-dd322a", "Source": "Field Sensors", "Value": 18}
 sent rec-missing-dd322a           {"record_id": "rec-missing-dd322a", "source": "Field Sensors"}
--> Service Bus queue 'records' on sb-i6brfzrlgfv6o.servicebus.windows.net
+-> Service Bus queue 'records' on sb-<token>.servicebus.windows.net
 waiting... 0/4 records settled
 waiting... 1/4 records settled
 processed-data (3):

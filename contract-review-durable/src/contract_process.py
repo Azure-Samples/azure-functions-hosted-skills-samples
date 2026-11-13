@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Deterministic contract review policy: validation, legal-review routing, and decisions.
 
 Everything here is plain Python with no I/O so the orchestrator stays replay-safe and

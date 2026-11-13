@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Shared loader for the sample business data in ``src/data``.
 
 Replace these lookups with calls to your ERP (purchase orders and goods receipts)

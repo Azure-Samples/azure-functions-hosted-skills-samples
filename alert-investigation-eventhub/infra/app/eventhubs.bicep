@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 param namespaceName string
 param eventHubName string
 @description('Consumer group the deployed function app reads from.')

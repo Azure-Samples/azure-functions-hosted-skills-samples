@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Account profile from Cosmos DB plus usage history from sample data."""
 
 from typing import Any

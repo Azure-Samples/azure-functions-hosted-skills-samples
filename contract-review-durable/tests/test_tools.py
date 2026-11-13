@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 from check_contract_terms import ContractTerms, check_contract_terms
 from get_clause_playbook import get_clause_playbook
 from get_standard_clause import get_standard_clause

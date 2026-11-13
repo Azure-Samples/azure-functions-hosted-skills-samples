@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Shared plumbing for the claim workflow tools: load the claim and classify failures."""
 
 from __future__ import annotations

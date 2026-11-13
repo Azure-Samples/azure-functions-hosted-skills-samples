@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 param name string
 param taskHubName string
 param location string = resourceGroup().location

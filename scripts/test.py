@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """One-command test runner for the scenario templates.
 
 Usage (from the repository root):

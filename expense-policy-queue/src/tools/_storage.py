@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Blob and queue access for the expense tools.
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite),

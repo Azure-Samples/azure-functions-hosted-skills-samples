@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Seed policies, send sample expense requests, and read the routed decisions.
 
 Usage (from the template folder):

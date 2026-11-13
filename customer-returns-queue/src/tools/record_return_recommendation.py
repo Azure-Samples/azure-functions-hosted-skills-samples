@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Records the hosted skill's recommendation for a support agent to review.
 
 This tool only stores a recommendation. Refunds, replacements, and credits stay

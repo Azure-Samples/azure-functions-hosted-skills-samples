@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Stores investigation reports in Azure Blob Storage.
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite),

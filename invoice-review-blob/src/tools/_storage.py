@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Blob Storage access for invoices and invoice reviews.
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite),

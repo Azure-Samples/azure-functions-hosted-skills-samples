@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Returns password reset and account unlock guidance.
 
 The guidance is fixed in code so the skill always points employees to self-service

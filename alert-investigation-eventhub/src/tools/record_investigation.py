@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Records the investigation report for an alert group.
 
 This tool only stores a report. Containment is a recommendation for an analyst: code

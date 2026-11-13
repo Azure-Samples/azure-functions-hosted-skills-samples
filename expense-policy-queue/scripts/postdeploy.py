@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """azd postdeploy hook: seed the policy documents into Blob Storage.
 
 Uploads each ``policies/*.md`` file that is not already in the ``policies`` container.

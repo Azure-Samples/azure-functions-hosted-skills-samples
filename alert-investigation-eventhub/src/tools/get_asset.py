@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 """Asset and owner inventory lookup backed by sample data."""
 
 from __future__ import annotations

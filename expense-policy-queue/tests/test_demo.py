@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 from demo import EXPECTED, EXPECTED_STRICT, SAMPLE_TAGS, format_table, load_sample, validate, with_expense_id
 
 

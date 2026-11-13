@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 import _storage
 import pytest
 from execute_containment_action import execute_containment_action
