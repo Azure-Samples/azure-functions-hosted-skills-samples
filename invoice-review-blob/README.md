@@ -2,7 +2,11 @@
 
 A supplier invoice PDF is uploaded to Blob Storage. A hosted skill on Azure Functions reads it, matches it against the purchase order, goods receipt, and vendor contract, then records a review — **approve for payment**, **hold for review**, or **reject** — with every discrepancy, the amount in dispute, and a message draft for the vendor.
 
-This is the [invoice review scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios) as a runnable template: `azd up`, upload the sample invoices, and read the reviews.
+This is the [invoice review scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#process-uploaded-invoices) as a runnable template: `azd up`, upload the sample invoices, and read the reviews.
+
+![Diagram of a Blob Storage invoice upload starting a hosted skill, which calls document and business tools and creates an invoice review report.](media/architecture.png)
+
+*Scenario overview from [Process uploaded invoices](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#process-uploaded-invoices) on Microsoft Learn. The diagram below shows how this template implements it.*
 
 ```text
  invoice PDF ──► Blob: invoices/{name} ──► Event Grid ──► invoice_review.agent.md ──► Blob: invoice-reviews/{name}.json

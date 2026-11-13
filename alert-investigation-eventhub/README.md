@@ -2,7 +2,11 @@
 
 Security and operations alerts stream into Event Hubs, sometimes thousands per minute. A code function filters them with deterministic rules, then routes what's left with [Microsoft-Decision-1](https://ai.azure.com/catalog/models/Microsoft-Decision-1). Only the alerts worth a closer look reach a hosted skill on Azure Functions, which gathers evidence and writes an investigation report: a **verdict**, the **evidence**, and the **recommended containment**. Containment is never executed automatically.
 
-This is the [security/operations alert investigation scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios) at high volume as a runnable template. Run `azd up`, send the sample burst of alerts, and read the routing decisions and reports.
+This is the [security/operations alert investigation scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#investigate-selected-events) at high volume as a runnable template. Run `azd up`, send the sample burst of alerts, and read the routing decisions and reports.
+
+![Diagram of Event Hubs alerts passing through a function that uses fixed rules and Microsoft-Decision-1, followed by an incident queue and a hosted skill that uses a generative model to investigate selected incidents.](media/architecture.png)
+
+*Scenario overview from [Investigate selected events](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#investigate-selected-events) on Microsoft Learn. The diagram below shows how this template implements it.*
 
 ```text
  alerts ──► Event Hubs: alerts ──► alert_router (code, function_app.py)

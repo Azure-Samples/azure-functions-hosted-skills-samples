@@ -2,7 +2,11 @@
 
 Employees post IT questions in a Teams channel. A hosted skill on Azure Functions picks up each new message through the Microsoft Teams connector, answers from the IT knowledge base, resolves common requests with tools — password reset guidance and software request tickets — and replies in the message thread. When it isn't sure, it hands the question to the human IT service desk.
 
-This is the [IT helpdesk in Microsoft Teams scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios) as a runnable template: `azd up`, try it over HTTP right away, then connect it to a Teams channel.
+This is the [IT helpdesk in Microsoft Teams scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#answer-questions-from-connector-events) as a runnable template: `azd up`, try it over HTTP right away, then connect it to a Teams channel.
+
+![Diagram of a Teams question starting a hosted skill through a connector trigger, followed by a knowledge search and a reply with source links.](media/architecture.png)
+
+*Scenario overview from [Answer questions from connector events](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#answer-questions-from-connector-events) on Microsoft Learn. The diagram below shows how this template implements it.*
 
 ```text
  Teams channel ──► Teams connector trigger ──► teams_helpdesk.agent.md ──► Teams MCP: reply in thread

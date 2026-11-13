@@ -2,7 +2,11 @@
 
 A return request lands on a queue. A hosted skill on Azure Functions reads it, looks up the order, the return policy, and the customer's support history, then records a recommendation — **approve**, **approve as an exception**, **decline**, or **escalate** — with its reasons, evidence, and a reply draft for a support agent to send.
 
-This is the [customer returns scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios) as a runnable template: `azd up`, send the sample requests, and read the recommendations.
+This is the [customer returns scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#process-customer-requests-from-messages) as a runnable template: `azd up`, send the sample requests, and read the recommendations.
+
+![Diagram of a customer return message starting a hosted skill, which checks order and policy tools and updates a support ticket.](media/architecture.png)
+
+*Scenario overview from [Process customer requests from messages](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#process-customer-requests-from-messages) on Microsoft Learn. The diagram below shows how this template implements it.*
 
 ```text
  return request ──► Storage queue ─┐

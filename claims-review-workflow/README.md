@@ -2,7 +2,11 @@
 
 An insurance claim package — a JSON claim form plus its supporting documents — is uploaded to Blob Storage. A hosted skill on Azure Functions reads the claim and starts a **Dynamic Workflow**: coverage, required documents, and claim history are checked in parallel as durable workflow steps, then a final step records a decision — **approve**, **request_info**, or **refer_to_adjuster** — with every reason.
 
-This is the [insurance claims review scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios) as a runnable template: `azd up`, upload the sample claims, and read the decisions. Workflow state runs on [Durable Task Scheduler](https://learn.microsoft.com/azure/azure-functions/durable/durable-task-scheduler/durable-task-scheduler), so every run can be inspected step by step in its dashboard.
+This is the [insurance claims review scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#plan-a-multistep-review) as a runnable template: `azd up`, upload the sample claims, and read the decisions. Workflow state runs on [Durable Task Scheduler](https://learn.microsoft.com/azure/azure-functions/durable/durable-task-scheduler/durable-task-scheduler), so every run can be inspected step by step in its dashboard.
+
+![Diagram of a claim upload starting a hosted skill, which plans parallel checks in a dynamic workflow and produces a report for a claims reviewer.](media/architecture.png)
+
+*Scenario overview from [Plan a multistep review](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#plan-a-multistep-review) on Microsoft Learn. The diagram below shows how this template implements it.*
 
 ```mermaid
 flowchart LR

@@ -2,7 +2,11 @@
 
 A vendor contract is submitted to an HTTP API. A Durable Functions orchestration runs the review process in code: it validates the contract, asks a hosted skill to compare it with Contoso's clause playbook, and then routes it. Low-risk contracts are **auto-approved**. Anything else gets a **legal review task**, and the orchestration waits for a lawyer's decision, escalating if nobody decides within 24 hours. Every outcome is written as an auditable decision record.
 
-This is the [contract review scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios) as a runnable template: `azd up`, submit the sample contracts, approve the risky one, and read the decisions.
+This is the [contract review scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#add-ai-to-an-existing-workflow) as a runnable template: `azd up`, submit the sample contracts, approve the risky one, and read the decisions.
+
+![Diagram of a durable activity calling an HTTP-triggered hosted skill, which compares contract terms through tools and returns a legal review result.](media/architecture.png)
+
+*Scenario overview from [Add AI to an existing workflow](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#add-ai-to-an-existing-workflow) on Microsoft Learn. The diagram below shows how this template implements it.*
 
 ```mermaid
 flowchart LR

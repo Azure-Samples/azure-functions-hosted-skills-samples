@@ -2,7 +2,11 @@
 
 Customer account documents, including usage numbers, live in Azure Cosmos DB. When an account changes, the change feed triggers a hosted skill on Azure Functions. The skill checks the account for churn signals: usage drop, upcoming renewal, open support issues, and unused seats. For accounts that need attention, it drafts a retention action for the customer success manager (CSM): a personalized outreach email and, when it fits, an offer within the tier's policy limits. The draft goes to a separate `retention-actions` container. Offers above the approval threshold are marked `needs_approval`.
 
-This is the [customer retention scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios) as a runnable template: run `azd up`, seed the sample accounts, lower their usage, and read the drafted actions.
+This is the [customer retention scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#respond-to-database-changes) as a runnable template: run `azd up`, seed the sample accounts, lower their usage, and read the drafted actions.
+
+![Diagram of an Azure Cosmos DB change starting a hosted skill, which reads customer records and support history and prepares an account report.](media/architecture.png)
+
+*Scenario overview from [Respond to database changes](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#respond-to-database-changes) on Microsoft Learn. The diagram below shows how this template implements it.*
 
 ```text
  usage job ──► Cosmos DB: retention/accounts ──► change feed ──► customer_retention.agent.md ──► Cosmos DB: retention/retention-actions

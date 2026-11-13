@@ -2,7 +2,11 @@
 
 Every weekday morning, a hosted skill on Azure Functions reads today's calendar, unread email, and open tasks, then publishes a short briefing: the **top three priorities** with the reason for each, the day's meetings with **suggested prep**, messages to answer, follow-ups, and things to watch out for, such as overlapping meetings or a phishing email.
 
-This is the [daily work briefing scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios) (a scheduled agent) as a runnable template. It works with built-in sample data and no extra setup: `azd up`, run it once, and read the briefing. When you're ready, connect it to your own Outlook calendar and mail through the Office 365 Outlook connector.
+This is the [daily work briefing scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#prepare-a-scheduled-work-summary) (a scheduled agent) as a runnable template. It works with built-in sample data and no extra setup: `azd up`, run it once, and read the briefing. When you're ready, connect it to your own Outlook calendar and mail through the Office 365 Outlook connector.
+
+![Diagram of a timer starting a hosted skill, which reads calendar, message, and document tools and sends a daily work summary.](media/architecture.png)
+
+*Scenario overview from [Prepare a scheduled work summary](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#prepare-a-scheduled-work-summary) on Microsoft Learn. The diagram below shows how this template implements it.*
 
 ```text
  timer (BRIEFING_SCHEDULE) ──► daily_briefing.agent.md ──► Blob: briefings/<date>.md + <date>.json
