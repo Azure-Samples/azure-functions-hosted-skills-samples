@@ -21,6 +21,17 @@ Pick a scenario, deploy it, send the sample events, and read what the skill deci
 
 The last two templates are simplified versions of the Hosted Skills team's demos [hosted-skills-delivery-recovery](https://github.com/greenie-msft/hosted-skills-delivery-recovery) and [hosted-skills-expense-processor](https://github.com/Azure-Samples/hosted-skills-expense-processor).
 
+## Starters
+
+Minimal templates for starting your own hosted skill from a trigger. Each one deploys the trigger's data source, Microsoft Foundry, an Azure Container Apps dynamic session pool (code interpreter), and an optional Office 365 Outlook connector (when `TO_EMAIL` is set). The skill is a single Markdown file with no custom tools, and its sample just logs (and optionally emails) a result. They follow the shape of the [daily blog timer starter](https://github.com/Azure-Samples/functions-daily-blog-hosted-skills-azd).
+
+| Template | Sample skill | Trigger | Data source deployed |
+|---|---|---|---|
+| [`starter-queue`](starter-queue) | Triage a support message: category, urgency, sentiment, suggested reply | Storage queue | Storage queue `support-requests` |
+| [`starter-servicebus`](starter-servicebus) | Review an order and recommend fulfill or hold | Service Bus queue | Service Bus namespace + queue `orders` |
+| [`starter-blob`](starter-blob) | Summarize an uploaded text document: summary, key points, action items | Blob (Event Grid) | Blob container `documents` + Event Grid system topic |
+| [`starter-cosmos`](starter-cosmos) | Summarize product catalog changes and flag low stock or big price changes | Cosmos DB change feed | Cosmos DB (serverless) `starter/products` + `leases` |
+
 ## Quickstart
 
 ```bash
@@ -39,6 +50,8 @@ Each template's README has the demo steps, local run instructions, and a "Make i
 - `infra/` — Bicep for a Flex Consumption app, managed identity everywhere (no keys), Microsoft Foundry model, and monitoring.
 - `scripts/demo.py` — send or upload the samples and print the results.
 - `tests/` — unit tests for the tools.
+
+The starters keep only `src/*.agent.md`, `infra/`, `samples/`, and `scripts/demo.py`.
 
 ## Test
 
