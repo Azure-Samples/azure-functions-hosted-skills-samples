@@ -22,6 +22,7 @@ This is the [security/operations alert investigation scenario](https://learn.mic
                                      ▼
  Queue: alerts-investigate ──► alert_investigator.agent.md ──► Blob: investigations/{group_id}.json
                                 │  hosted skill (Flex Consumption)
+                                ├─ get_alert_payload         (full group when the message is a Blob pointer)
                                 ├─ get_asset                 (owner, criticality, tags)
                                 ├─ get_signin_logs           (identity provider sign-ins)
                                 ├─ get_endpoint_events       (process, file, and EDR events)
@@ -32,6 +33,8 @@ This is the [security/operations alert investigation scenario](https://learn.mic
 ```
 
 Every routing outcome, including suppressed alerts and Decision-1 errors, is written to the `alertdecisions` table with its source, choice, and per-option probabilities. Nothing is silently dropped.
+
+A Storage Queue message can be at most 64 KiB, but one Event Hubs event can be up to 1 MB. When a queue message for an alert group would be larger than 48 KiB, the router writes the full group to `alert-payloads/{queue}/{group_id}.json` in Blob Storage and queues a small pointer (`group_id`, `route`, `alert_count`, `payload_blob`) instead. The skill loads the group with `get_alert_payload`. See [Large alerts](#large-alerts).
 
 ## Why this scenario uses two stages
 
@@ -79,7 +82,7 @@ Pick a region where Microsoft-Decision-1 is available with Global Standard: `eas
 - An Event Hubs namespace (Standard) with the `alerts` hub and two consumer groups: `alert-router` for the app and `local-dev` for running locally.
 - A storage account (no shared key access) with:
   - the `alerts-investigate` and `alerts-review` queues
-  - the `investigations` container
+  - the `investigations` container, and the `alert-payloads` container for alert groups too large for a queue message
   - the `alertdecisions` and `alertfingerprints` tables
 - A Microsoft Foundry account and project with two deployments: `gpt-5.4` for the skill, and `decision-1`, which runs the `Microsoft-Decision-1` model, for routing.
 - Application Insights and Log Analytics.
@@ -110,6 +113,7 @@ python scripts/demo.py results    # print today's routing decisions and investig
 - the duplicates were deduplicated
 - the routine alerts were summarized
 - Decision-1 routed the rest
+- an extra critical alert, `ALR-1011`, with about 140 KB of evidence was offloaded to Blob Storage, and the skill loaded it and wrote a report that names what's only in the payload (`rclone`)
 
 Example output (from a real run):
 
@@ -192,6 +196,7 @@ Locally, the app uses your `az login` identity for Event Hubs, Microsoft-Decisio
 | Routing options and their criteria for Decision-1 | `ROUTE_OPTIONS` and `INSTRUCTIONS` in `src/alert_router/router.py` |
 | Investigation steps, verdict rules, and report tone | `src/alert_investigator.agent.md` |
 | Evidence sources (SIEM, EDR, IdP, CMDB, threat intel) | `src/tools/get_*.py` and `lookup_threat_intel.py`. Replace the `src/data/*.json` reads with your APIs. |
+| Queue message size budget | `MAX_QUEUE_MESSAGE_BYTES` in `src/alert_router/router.py` |
 | Where reports go (SOAR case, ticket, Teams) | `src/tools/record_investigation.py` and `_storage.py` |
 | Sample alerts | `samples/alert-burst.json` |
 | Models | `azd env set FOUNDRY_MODEL ...` and the deployments in `infra/app/foundry.bicep` |
@@ -204,7 +209,18 @@ Locally, the app uses your `az login` identity for Event Hubs, Microsoft-Decisio
 - **Escalations aren't deduplicated.** Severity is part of the fingerprint, so a low alert followed by a critical one on the same host is treated as new.
 - **Alert content is data, not instructions.** The skill is told to treat alert descriptions and log content as evidence to report, never as instructions to follow.
 - **Idempotent.** Event Hubs and queues deliver at least once. The fingerprint claim and the report write (`overwrite=False`) both detect replays, so a retry doesn't double-count duplicates or write a second report.
-- **No extra reach.** `web_request` and MCP are disabled for this skill. It can only call its seven tools.
+- **Large alerts can't block a partition.** Every queue message is checked against a 48 KiB budget before it's sent; larger payloads go to Blob Storage with a pointer on the queue. See [Large alerts](#large-alerts).
+- **No extra reach.** `web_request` and MCP are disabled for this skill. It can only call its eight tools.
+
+## Large alerts
+
+The router never sends a queue message that Storage Queue would reject. Without that, a single valid but large event (for example, an EDR alert with a long file list) would make `send_message` fail, the function would retry the whole Event Hubs batch, and the same event would fail again, stalling that partition.
+
+- **Size check.** `enqueue_bounded` in `src/alert_router/router.py` measures the message as it's actually sent: the JSON text, XML-escaped, in UTF-8. The queues use `messageEncoding: none` (`src/host.json`), so there is no base64 overhead. The budget is 48 KiB, which leaves room under the 64 KiB limit and still fits if you switch to base64 (48 KiB × 4/3 = 64 KiB).
+- **Offload.** A larger message is written in full to `alert-payloads/{queue}/{group_id}.json`, then a pointer is queued. The blob is written first, so a pointer never refers to a missing blob. The blob name comes from the group ID, so a retried batch overwrites the same blob. The decision record has the blob name in `payload_blob`. Invalid events go to `alerts-review` the same way, with the full `raw_event`.
+- **Nothing is dropped.** Every alert in a group goes into the payload. Short fields that are also stored in Table Storage are bounded when the event is parsed: `title` to 500 characters, and `rule_id`, `source`, `host`, and `user` to 256.
+- **Loading.** `get_alert_payload` reads only `alert-payloads/alerts-investigate/{group_id}.json` for a validated `group_id`. The blob keeps every byte. In the tool result only, strings longer than 4,000 characters and lists longer than 50 items are shortened with a `[truncated ...]` marker so one huge field can't flood the model's context.
+- **Clean-up.** Payload blobs aren't deleted automatically. Add a [lifecycle management rule](https://learn.microsoft.com/azure/storage/blobs/lifecycle-management-overview) on `alert-payloads` to delete them after your retention period.
 
 ## Test
 
@@ -221,6 +237,7 @@ The unit tests in `tests/` cover:
 - the rules
 - the Decision-1 client, with mocked HTTP, including 429 retries
 - the routing pipeline and fail-safe paths
+- queue message size: a single huge event and a batch of large events always produce messages under the limit, and the full data can be read back from Blob Storage
 - the storage idempotency
 - the tools
 - the demo validation

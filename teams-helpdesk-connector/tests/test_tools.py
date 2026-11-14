@@ -9,6 +9,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from create_software_request import SoftwareRequest, create_software_request
 from escalate_to_human import Escalation, escalate_to_human
 from get_password_reset_guidance import PasswordHelpRequest, get_password_reset_guidance
+from mark_reply_delivered import Delivery, mark_reply_delivered
 from post_reply import Reply, post_reply
 from search_knowledge_base import KnowledgeBaseQuery, search_knowledge_base
 
@@ -118,18 +119,54 @@ def test_post_reply_records_once_and_decides_delivery(container, monkeypatch):
     monkeypatch.setenv("TEAMS_MCP_SERVER_URL", "https://example/mcp")
     reply = Reply(message_id="msg-3", channel="teams", outcome="answered", reply="Use https://aka.ms/sspr")
     assert post_reply(reply) == {"status": "recorded", "deliver_via_teams": True, "blob": "replies/msg-3.json"}
+    assert mark_reply_delivered(Delivery(message_id="msg-3", teams_reply_id="1700000000001"))["status"] == "delivered"
     duplicate = post_reply(reply)
     assert duplicate["status"] == "duplicate" and duplicate["deliver_via_teams"] is False
     assert json.loads(container.blobs["replies/msg-3.json"])["outcome"] == "answered"
+    assert json.loads(container.blobs["deliveries/msg-3.json"])["teams_reply_id"] == "1700000000001"
 
     http_reply = Reply(message_id="msg-4", channel="http", outcome="answered", reply="Hi")
     assert post_reply(http_reply)["deliver_via_teams"] is False
+    assert post_reply(http_reply)["status"] == "duplicate"
+
+
+def test_reply_stays_retryable_until_teams_send_succeeds(container, monkeypatch):
+    # The reply is recorded, then the Teams MCP call fails or the run stops before
+    # mark_reply_delivered. Redelivery must resend the recorded reply, not suppress it.
+    monkeypatch.setenv("TEAMS_MCP_SERVER_URL", "https://example/mcp")
+    first = Reply(message_id="msg-6", channel="teams", outcome="ticket_created", reply="Ticket SR-1 created.", ticket_id="SR-1")
+    assert post_reply(first)["status"] == "recorded"
+
+    rewritten = Reply(message_id="msg-6", channel="teams", outcome="ticket_created", reply="Different wording.", ticket_id="SR-1")
+    retry = post_reply(rewritten)
+    assert retry["status"] == "pending_delivery" and retry["deliver_via_teams"] is True
+    assert retry["reply"] == "Ticket SR-1 created."  # the originally recorded reply, not a new one
+    assert post_reply(rewritten)["status"] == "pending_delivery"  # still retryable on a second failure
+    assert json.loads(container.blobs["replies/msg-6.json"])["reply"] == "Ticket SR-1 created."
+    assert "deliveries/msg-6.json" not in container.blobs
+
+    assert mark_reply_delivered(Delivery(message_id="msg-6"))["status"] == "delivered"
+    assert post_reply(rewritten)["status"] == "duplicate"
+    assert mark_reply_delivered(Delivery(message_id="msg-6"))["status"] == "already_delivered"
+
+
+def test_mark_reply_delivered_rejects_unknown_or_non_teams_messages(container, monkeypatch):
+    monkeypatch.setenv("TEAMS_MCP_SERVER_URL", "https://example/mcp")
+    with pytest.raises(ValueError, match="post_reply first"):
+        mark_reply_delivered(Delivery(message_id="never-recorded"))
+    post_reply(Reply(message_id="msg-7", channel="http", outcome="answered", reply="Hi"))
+    with pytest.raises(ValueError, match="not delivered through Teams"):
+        mark_reply_delivered(Delivery(message_id="msg-7"))
+    with pytest.raises(ValueError):
+        mark_reply_delivered(Delivery(message_id="../replies/msg-7"))
+    assert not any(name.startswith("deliveries/") for name in container.blobs)
 
 
 def test_post_reply_without_teams_connection(container, monkeypatch):
     monkeypatch.setenv("TEAMS_MCP_SERVER_URL", "")
     reply = Reply(message_id="msg-5", channel="teams", outcome="escalated", reply="A person will follow up.")
     assert post_reply(reply)["deliver_via_teams"] is False
+    assert post_reply(reply)["status"] == "duplicate"
 
 
 @pytest.mark.parametrize("bad", ["", "../etc", "a/b", "x" * 129])

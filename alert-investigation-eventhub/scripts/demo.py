@@ -7,7 +7,8 @@ Usage (from the template folder):
 
     python scripts/demo.py send                 # send the sample burst to the deployed Event Hub
     python scripts/demo.py results              # print today's routing decisions and investigations
-    python scripts/demo.py e2e                  # send a unique copy of the burst and verify the outcome
+    python scripts/demo.py e2e                  # send a unique copy of the burst plus one oversized alert
+                                                # and verify the outcome
 
 Add ``--local`` to read storage from Azurite and the Event Hubs namespace from
 ``src/local.settings.json`` (for ``func start`` pointed at the deployed namespace).
@@ -38,6 +39,8 @@ DUPLICATES = ["ALR-1003", "ALR-1004", "ALR-1005", "ALR-1006", "ALR-1007"]
 ROUTINE = "ALR-1008"
 SUPPRESSED = "ALR-1009"
 BLOCKED_PHISH = "ALR-1010"
+OVERSIZED = "ALR-1011"
+OVERSIZED_MARKER = "rclone"
 DECISION_SOURCES = {"decision1", "decision1_low_confidence"}
 
 # What a reviewer would expect from Decision-1. A mismatch is reported but does not fail the
@@ -141,6 +144,29 @@ def prepare_run(samples: list[dict[str, Any]], run_id: str, now: datetime) -> li
     ]
 
 
+def oversized_alert(run_id: str, now: datetime) -> dict[str, Any]:
+    """A critical alert whose evidence (~150 KB) is far larger than a 64 KiB queue message."""
+    files = [f"\\\\fs-02\\finance\\2026\\ap\\vendor-{i:05d}\\invoice-{i:05d}-remittance.xlsx" for i in range(1800)]
+    return {
+        "alert_id": f"{OVERSIZED}-{run_id}",
+        "source": f"edr#{run_id}",
+        "rule_id": "EDR-BULK-EXFILTRATION",
+        "title": "Bulk file upload from the finance file server",
+        "severity": "critical",
+        "host": "fs-02",
+        "user": "m.garcia",
+        "detected_at": now.replace(microsecond=0).isoformat(),
+        "description": "rclone.exe uploaded thousands of finance files from fs-02 to an external host.",
+        "evidence": {
+            "process": "rclone.exe",
+            "command_line": "rclone.exe copy F:\\finance remote:drop --transfers 32",
+            "remote_ip": "185.220.101.47",
+            "files_uploaded": len(files),
+            "file_list": files,
+        },
+    }
+
+
 def send(target: Target, alerts: list[dict[str, Any]]) -> None:
     from azure.eventhub import EventData, EventHubProducerClient
 
@@ -228,7 +254,7 @@ def collect(target: Target, ids: dict[str, str], since: datetime) -> dict[str, A
 
 def is_complete(state: dict[str, Any]) -> bool:
     records = state["records"]
-    handled = [CRITICAL, SUSPICIOUS, ROUTINE, SUPPRESSED, BLOCKED_PHISH, DUPLICATES[0]]
+    handled = [CRITICAL, SUSPICIOUS, ROUTINE, SUPPRESSED, BLOCKED_PHISH, DUPLICATES[0], OVERSIZED]
     if any(not records.get(base) for base in handled):
         return False
     if (state["duplicate_count"] or 0) < len(DUPLICATES) - 1:
@@ -265,6 +291,21 @@ def validate(state: dict[str, Any]) -> tuple[list[str], list[str]]:
                 errors.append(f"{CRITICAL}: a containment action is not marked executed=false")
             if not report.get("requires_human_approval"):
                 errors.append(f"{CRITICAL}: report does not require human approval")
+
+    oversized = _only(records.get(OVERSIZED, []))
+    if not oversized:
+        errors.append(f"{OVERSIZED}: expected exactly one decision record, found {len(records.get(OVERSIZED, []))}")
+    elif oversized.get("route") != "investigate" or not oversized.get("payload_blob"):
+        errors.append(f"{OVERSIZED}: oversized alert was not offloaded to investigation "
+                      f"(route {oversized.get('route')!r}, payload_blob {oversized.get('payload_blob')!r})")
+    else:
+        report = state["reports"].get(oversized["group_id"])
+        if report is None:
+            errors.append(f"{OVERSIZED}: no investigation report for the offloaded alert")
+        elif OVERSIZED_MARKER not in json.dumps(report).lower():
+            # The queue pointer has no alert details, so the report can only name the tool if the
+            # skill loaded the full payload from Blob Storage.
+            errors.append(f"{OVERSIZED}: report does not mention {OVERSIZED_MARKER!r}; was the payload loaded?")
 
     first_dupe = records.get(DUPLICATES[0], [])
     if len(first_dupe) != 1:
@@ -307,7 +348,8 @@ def print_state(state: dict[str, Any]) -> None:
         for r in recs:
             probs = r.get("probabilities") or {}
             top = ", ".join(f"{k}={v:.2f}" for k, v in sorted(probs.items(), key=lambda kv: -kv[1])) if probs else "-"
-            print(f"  {base}: {str(r.get('route')):<11} source={str(r.get('source')):<24} alerts={r.get('alert_count')} [{top}]")
+            blob = f" payload_blob={r['payload_blob']}" if r.get("payload_blob") else ""
+            print(f"  {base}: {str(r.get('route')):<11} source={str(r.get('source')):<24} alerts={r.get('alert_count')} [{top}]{blob}")
         if not recs:
             print(f"  {base}: (no record — deduplicated or not processed yet)")
     print(f"\nDuplicate count on {DUPLICATES[0]}: {state['duplicate_count']}")
@@ -360,7 +402,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     run_id = uuid.uuid4().hex[:6]
-    alerts = prepare_run(load_samples(), run_id, now)
+    alerts = [*prepare_run(load_samples(), run_id, now), oversized_alert(run_id, now)]
     ids = {f"ALR-{a['alert_id'].split('-')[1]}": a["alert_id"] for a in alerts}
     send(target, alerts)
 

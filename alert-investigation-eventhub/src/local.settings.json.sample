@@ -18,6 +18,7 @@
     "REVIEW_QUEUE": "alerts-review",
     "DECISIONS_TABLE": "alertdecisions",
     "FINGERPRINTS_TABLE": "alertfingerprints",
-    "INVESTIGATIONS_CONTAINER": "investigations"
+    "INVESTIGATIONS_CONTAINER": "investigations",
+    "PAYLOADS_CONTAINER": "alert-payloads"
   }
 }

@@ -83,3 +83,22 @@ def test_record_decision_serializes_lists(store):
     assert row["route"] == "routine" and row["confidence"] == 0.9
     assert json.loads(row["alert_ids"]) == ["G-1", "G-2"]
     assert json.loads(row["probabilities"]) == {"routine": 0.9}
+
+
+def test_enqueue_sends_text_and_save_payload_overwrites(store):
+    sent, uploads = [], []
+
+    class FakeQueue:
+        def send_message(self, text):
+            sent.append(text)
+
+    class FakeContainer:
+        def upload_blob(self, name, data, overwrite, content_type):
+            uploads.append((name, data, overwrite))
+
+    store._queue = lambda name: FakeQueue()
+    store._container = lambda: FakeContainer()
+    store.enqueue("q", '{"group_id":"G-1"}')
+    store.save_payload("q/G-1.json", "{}")
+    assert sent == ['{"group_id":"G-1"}']
+    assert uploads == [("q/G-1.json", "{}", True)]

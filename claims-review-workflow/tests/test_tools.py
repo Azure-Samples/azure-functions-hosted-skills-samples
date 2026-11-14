@@ -186,36 +186,65 @@ def test_workflow_records_decision_once(store, claim_id):
     assert again["status"] == "duplicate" and again["decision"] == EXPECTED[claim_id]
 
 
-def test_publisher_ignores_tampered_history(store):
-    args = {"claim_blob": "CLM-24003.json"}
-    history = check_claim_history(args)
-    history["fraud_signals"] = []
+def _all_clear(args: dict) -> dict:
+    """Check results with the right labels that claim everything is fine."""
+    coverage, documents, history = check_coverage(args), check_documents(args), check_claim_history(args)
+    return {
+        "coverage": {**coverage, "covered": True, "issues": [], "estimated_payout": coverage["amount_claimed"]},
+        "documents": {**documents, "missing": [], "issues": [], "complete": True},
+        "history": {**history, "fraud_signals": [], "clean": True},
+    }
+
+
+@pytest.mark.parametrize("claim_id", ["CLM-24002", "CLM-24003"])
+def test_publisher_never_approves_on_fabricated_all_clear_results(store, claim_id):
+    args = {"claim_blob": f"{claim_id}.json"}
+    result = publish_claim_decision({**args, **_all_clear(args), "recommended_decision": "approve"})
+    record = store["saved"][claim_id]
+    assert result["decision"] == record["decision"] == "refer_to_adjuster"
+    assert record["auto_approved"] is False and record["check_mismatches"]
+    assert any(r.startswith("Check mismatch: ") for r in record["reasons"])
+    # The record carries the recomputed results, not the fabricated ones.
+    if claim_id == "CLM-24002":
+        assert {m["type"] for m in record["documents"]["missing"]} == {"photos", "plumber_report"}
+    else:
+        assert {s["code"] for s in record["fraud_signals"]} == {"frequent_claims", "new_policy"}
+
+
+def test_publisher_decides_on_recomputed_checks_only(store):
+    # Fabricated history on a cheap CLM-24003 copy: still referred for the real fraud signals.
     store["inbox"]["CLM-24003.json"] = {**_sample("CLM-24003"), "amount_claimed": 900}
+    args = {"claim_blob": "CLM-24003.json"}
+    fabricated = _all_clear(args)
     result = publish_claim_decision({
-        **args,
-        "coverage": check_coverage(args),
-        "documents": check_documents(args),
-        "history": history,
-        "recommended_decision": "approve",
+        **args, "coverage": check_coverage(args), "documents": check_documents(args), "history": fabricated["history"],
     })
     record = store["saved"]["CLM-24003"]
     assert result["decision"] == "refer_to_adjuster"
+    assert record["check_mismatches"] == ["history differs from the recomputed claim_history check in: fraud_signals."]
     assert {s["code"] for s in record["fraud_signals"]} == {"frequent_claims", "new_policy"}
 
 
-def test_publisher_rejects_results_from_another_claim(store):
-    other = check_coverage({"claim_blob": "CLM-24002.json"})
+def test_publisher_refers_missing_or_foreign_check_results(store):
     args = {"claim_blob": "CLM-24001.json"}
-    with pytest.raises(WorkflowTerminalError) as exc:
-        publish_claim_decision({
-            **args, "coverage": other, "documents": check_documents(args), "history": check_claim_history(args),
-        })
-    assert exc.value.error_code == "check_claim_mismatch"
-    with pytest.raises(WorkflowTerminalError) as exc:
-        publish_claim_decision({**args, "coverage": "${check_coverage.result}"})
-    assert exc.value.error_code == "invalid_check_result"
-    assert store["saved"] == {}
+    other = check_coverage({"claim_blob": "CLM-24002.json"})
+    result = publish_claim_decision({
+        **args, "coverage": other, "documents": "${check_documents.result}", "recommended_decision": "approve",
+    })
+    record = store["saved"]["CLM-24001"]
+    assert result["decision"] == "refer_to_adjuster"
+    assert record["check_mismatches"] == [
+        "coverage belongs to claim 'CLM-24002', not 'CLM-24001'.",
+        "documents is not a documents check result.",
+        "history is not a claim_history check result.",
+    ]
 
+
+def test_genuine_check_results_have_no_mismatches():
+    claim = _checks.normalize_claim(_sample("CLM-24003"))
+    recomputed = _checks.run_checks(claim, _exists)
+    roundtrip = json.loads(json.dumps(recomputed))
+    assert _checks.find_check_mismatches(roundtrip, recomputed) == []
 
 def test_invalid_claim_is_terminal(store):
     store["inbox"]["bad.json"] = {"claim_id": "X"}

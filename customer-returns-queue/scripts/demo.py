@@ -118,38 +118,53 @@ def load_samples(only: str | None = None) -> list[dict[str, Any]]:
     return samples
 
 
-def send(target: Target, messages: list[dict[str, Any]]) -> None:
-    bodies = [json.dumps(m) for m in messages]
+def send_bodies(target: Target, bodies: list[str], message_ids: list[str] | None = None) -> list[str]:
+    """Send raw message bodies and return each message"s trigger ID.
+
+    Storage queue IDs are assigned by the service; Service Bus IDs are the ones we set.
+    """
     if target.provider == "servicebus":
         from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
         if not target.servicebus_namespace:
             raise SystemExit("Service Bus namespace is not configured.")
+        ids = message_ids or [uuid.uuid4().hex for _ in bodies]
         with ServiceBusClient(target.servicebus_namespace, _credential()) as client:
             with client.get_queue_sender(target.queue_name) as sender:
-                for message, body in zip(messages, bodies):
+                for body, message_id in zip(bodies, ids):
                     sender.send_messages(
-                        ServiceBusMessage(body, message_id=message["request_id"], content_type="application/json")
+                        ServiceBusMessage(body, message_id=message_id, content_type="application/json")
                     )
+        return list(ids)
+
+    from azure.core.exceptions import ResourceExistsError
+    from azure.storage.queue import QueueClient
+
+    if target.storage_connection:
+        queue = QueueClient.from_connection_string(target.storage_connection, target.queue_name)
+        try:
+            queue.create_queue()
+        except ResourceExistsError:
+            pass
     else:
-        from azure.core.exceptions import ResourceExistsError
-        from azure.storage.queue import QueueClient
+        queue = QueueClient(
+            f"https://{target.storage_account}.queue.core.windows.net", target.queue_name, credential=_credential()
+        )
+    return [queue.send_message(body).id for body in bodies]
 
-        if target.storage_connection:
-            queue = QueueClient.from_connection_string(target.storage_connection, target.queue_name)
-            try:
-                queue.create_queue()
-            except ResourceExistsError:
-                pass
-        else:
-            queue = QueueClient(
-                f"https://{target.storage_account}.queue.core.windows.net", target.queue_name, credential=_credential()
-            )
-        for body in bodies:
-            queue.send_message(body)
 
+def send(target: Target, messages: list[dict[str, Any]]) -> None:
+    send_bodies(target, [json.dumps(m) for m in messages], [m["request_id"] for m in messages])
     for message in messages:
         print(f"sent {message['request_id']} -> {target.provider} queue '{target.queue_name}'")
+
+
+def malformed_bodies(run_id: str) -> list[str]:
+    """Two different malformed requests; each must get its own escalation."""
+    return [
+        f"not json: please refund my order ({run_id})",
+        json.dumps({"customer_id": "C-1001", "message": f"Where do I send my return? ({run_id})"}),
+    ]
 
 
 def read_results(target: Target, request_ids: list[str] | None = None) -> dict[str, dict[str, Any]]:
@@ -218,6 +233,17 @@ def validate(results: dict[str, dict[str, Any]], expected_ids: list[str]) -> lis
     return errors
 
 
+def validate_malformed(results: dict[str, dict[str, Any]], record_ids: list[str]) -> list[str]:
+    errors = []
+    for record_id in record_ids:
+        doc = results.get(record_id)
+        if doc is None:
+            errors.append(f"{record_id}: malformed message was not escalated")
+        elif doc.get("decision") != "escalate" or not doc.get("requires_human_approval"):
+            errors.append(f"{record_id}: malformed message recorded as {doc.get('decision')!r}, expected escalate")
+    return errors
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -250,9 +276,12 @@ def main(argv: list[str] | None = None) -> int:
     messages = [{**s, "request_id": f"{s['request_id']}-{run_id}"} for s in load_samples()]
     ids = [m["request_id"] for m in messages]
     send(target, messages)
-    results = wait_for(target, ids, args.timeout)
+    # Malformed messages are keyed by their trigger message ID, so each gets its own record.
+    malformed_ids = [f"msg-{i}" for i in send_bodies(target, malformed_bodies(run_id))]
+    print(f"sent {len(malformed_ids)} malformed messages -> expecting {', '.join(malformed_ids)}")
+    results = wait_for(target, ids + malformed_ids, args.timeout)
     print_results(results)
-    errors = validate(results, ids)
+    errors = validate(results, ids) + validate_malformed(results, malformed_ids)
     for error in errors:
         print(f"FAIL {error}", file=sys.stderr)
     print("e2e passed" if not errors else "e2e failed")

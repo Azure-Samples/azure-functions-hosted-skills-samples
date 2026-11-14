@@ -1,8 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import json
+
 import _storage
 import pytest
+from get_alert_payload import get_alert_payload
 from execute_containment_action import execute_containment_action
 from get_asset import get_asset
 from get_endpoint_events import get_endpoint_events
@@ -105,3 +108,22 @@ def test_record_is_idempotent(saved):
 def test_record_rejects_bad_group_id(saved):
     assert record_investigation(report(group_id="../etc/passwd"))["status"] == "rejected"
     assert saved == {}
+
+
+def test_get_alert_payload_reads_the_offloaded_group(monkeypatch):
+    payload = {"group_id": "C-1", "alerts": [{"alert_id": "C-1", "evidence": {"cmd": "x" * 10_000, "ips": list(range(80))}}]}
+    reads = []
+
+    def load_payload(blob_name):
+        reads.append(blob_name)
+        return json.dumps(payload) if blob_name == "alerts-investigate/C-1.json" else None
+
+    monkeypatch.setattr(_storage, "load_payload", load_payload)
+    monkeypatch.delenv("INVESTIGATE_QUEUE", raising=False)
+    result = get_alert_payload("C-1")
+    evidence = result["alerts"][0]["evidence"]
+    assert result["payload_blob"] == "alerts-investigate/C-1.json"
+    assert evidence["cmd"].endswith("[truncated 6000 more characters]") and len(evidence["ips"]) == 51
+    assert "error" in get_alert_payload("C-2")
+    assert "error" in get_alert_payload("../alerts-review/C-1")
+    assert reads == ["alerts-investigate/C-1.json", "alerts-investigate/C-2.json"]

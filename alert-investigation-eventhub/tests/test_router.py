@@ -1,13 +1,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import base64
 import json
 from datetime import UTC, datetime
 
+import pytest
 from alert_router import router
 from alert_router.decision import ChoiceAnswer, DecisionError
 
 NOW = datetime(2026, 11, 12, 9, 30, tzinfo=UTC)
+QUEUE_LIMIT = 64 * 1024
 SETTINGS = {"investigate_queue": "inv", "review_queue": "rev", "window_minutes": 60, "min_confidence": 0.5,
             "max_concurrency": 2}
 
@@ -17,6 +20,8 @@ class FakeStore:
         self.fingerprints = {}
         self.decisions = {}
         self.queues = {"inv": [], "rev": []}
+        self.sent = []
+        self.blobs = {}
         self.events = []
 
     def claim_fingerprint(self, fingerprint, bucket, alert):
@@ -33,9 +38,21 @@ class FakeStore:
         self.events.append(("record", record["group_id"]))
         self.decisions[record["group_id"]] = record
 
-    def enqueue(self, queue_name, message):
+    def enqueue(self, queue_name, text):
+        # Like Storage Queue: reject a message over 64 KiB, with plain or base64 encoding.
+        if router.queue_message_size(text) > QUEUE_LIMIT or len(base64.b64encode(text.encode())) > QUEUE_LIMIT:
+            raise ValueError("RequestBodyTooLarge")
+        message = json.loads(text)
         self.events.append(("enqueue", message["group_id"]))
-        self.queues[queue_name].append(json.loads(json.dumps(message)))
+        self.sent.append(text)
+        self.queues[queue_name].append(message)
+
+    def save_payload(self, blob_name, text):
+        self.blobs[blob_name] = text
+
+    def full(self, message):
+        """What the consumer sees: the message itself, or the payload it points to."""
+        return json.loads(self.blobs[message["payload_blob"]]) if "payload_blob" in message else message
 
 
 def body(alert_id, rule_id="R-1", severity="low", host="h1", user="", **extra):
@@ -158,3 +175,62 @@ def test_related_alerts_are_grouped_into_one_decision():
 def test_summarize():
     _, records = run([body("A-1"), body("A-2"), body("C-1", host="h2", severity="critical")], decider_returning("routine"))
     assert router.summarize(list(records.values()), 3) == "received=3 groups=2 deduplicated=1 investigate=1 routine=1"
+
+
+def huge_evidence(kb, marker):
+    lines = [f"powershell -enc {'A' * 120} <&> line {i}" for i in range(kb * 1024 // 140)]
+    return {"command_lines": lines, "marker": marker}
+
+
+def test_small_message_is_queued_inline():
+    store, records = run([body("C-1", severity="critical")], decider_returning("routine"))
+    assert "alerts" in store.queues["inv"][0] and store.blobs == {}
+    assert records["C-1"]["payload_blob"] == ""
+
+
+def test_single_huge_event_is_offloaded_to_blob():
+    evidence = huge_evidence(300, "marker-end")
+    store, records = run([body("C-1", severity="critical", evidence=evidence)], decider_returning("routine"))
+    (pointer,) = store.queues["inv"]
+    assert pointer["payload_blob"] == "inv/C-1.json" and "alerts" not in pointer
+    assert records["C-1"]["payload_blob"] == "inv/C-1.json"
+    assert pointer["route"]["source"] == "critical_bypass" and pointer["alert_count"] == 1
+    assert store.full(pointer)["alerts"][0]["evidence"] == evidence  # nothing lost
+    assert all(router.queue_message_size(t) <= router.MAX_QUEUE_MESSAGE_BYTES for t in store.sent)
+
+
+def test_batch_of_large_events_never_exceeds_the_queue_limit():
+    bodies = []
+    for i in range(40):
+        bodies.append(body(f"L-{i}", rule_id=f"R-{i}", host=f"h{i % 4}", severity="critical" if i % 2 else "medium",
+                           evidence=huge_evidence(20, f"m{i}"), description="&<>" * 1000, title="T" * 5000))
+    bodies.append(b"{" + b"x" * 200_000)  # invalid and huge
+    decider = decider_returning("uncertain")
+    store, records = run(bodies, decider)
+    assert all(router.queue_message_size(t) <= router.MAX_QUEUE_MESSAGE_BYTES for t in store.sent)
+    assert all(len(base64.b64encode(t.encode())) <= QUEUE_LIMIT for t in store.sent)
+    # Every alert reached a queue in full, including the invalid event's raw body.
+    delivered = {a["alert_id"]: a for q in store.queues.values() for m in q for a in store.full(m).get("alerts", [])}
+    assert set(delivered) == {f"L-{i}" for i in range(40)}
+    assert delivered["L-7"]["evidence"]["marker"] == "m7" and len(delivered["L-7"]["title"]) == 500
+    (invalid,) = [store.full(m) for m in store.queues["rev"] if m["group_id"].startswith("invalid-")]
+    assert len(invalid["raw_event"]) == 200_001
+    assert all(r["payload_blob"] for r in records.values())
+
+
+def test_offload_is_idempotent_on_retry():
+    evidence = huge_evidence(100, "x")
+    store, _ = run([body("C-1", severity="critical", evidence=evidence)], decider_returning("routine"))
+    run([body("C-1", severity="critical", evidence=evidence)], decider_returning("routine"), store=store)
+    assert list(store.blobs) == ["inv/C-1.json"] and len(store.queues["inv"]) == 2
+
+
+def test_blob_failure_raises_before_anything_is_queued_or_recorded():
+    class FailingBlobStore(FakeStore):
+        def save_payload(self, blob_name, text):
+            raise OSError("blob unavailable")
+
+    store = FailingBlobStore()
+    with pytest.raises(OSError):
+        run([body("C-1", severity="critical", evidence=huge_evidence(100, "x"))], decider_returning("routine"), store)
+    assert store.queues == {"inv": [], "rev": []} and store.decisions == {}

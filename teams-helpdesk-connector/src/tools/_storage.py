@@ -4,9 +4,10 @@
 """Blob Storage records for helpdesk replies, tickets, and escalations.
 
 Everything lives in one container (``HELPDESK_CONTAINER``) under ``replies/``,
-``tickets/``, and ``escalations/``. Each record is keyed by the Teams message ID and
-written with ``overwrite=False``, so a redelivered message never creates a second
-ticket, escalation, or reply.
+``deliveries/``, ``tickets/``, and ``escalations/``. Each record is keyed by the Teams
+message ID and written with ``overwrite=False``, so a redelivered message never creates
+a second ticket, escalation, or reply. ``deliveries/`` is written only after the reply
+was posted in Teams, so a reply that was recorded but never delivered stays retryable.
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite),
 or the ``AzureWebJobsStorage__blobServiceUri`` setting with the app's managed identity
@@ -25,7 +26,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob import BlobServiceClient, ContainerClient
 
 _MESSAGE_ID = re.compile(r"^[A-Za-z0-9._-]{1,128}$")
-PREFIXES = ("replies", "tickets", "escalations")
+PREFIXES = ("replies", "deliveries", "tickets", "escalations")
 
 
 @cache

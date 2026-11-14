@@ -11,16 +11,21 @@ Every alert ends in exactly one place:
 * Decision-1 ``investigate``          -> ``alerts-investigate``
 * Decision-1 ``aggregate``/``routine``-> recorded in the decisions table (the summary)
 * ``uncertain``, low confidence, an API error, or an invalid event -> ``alerts-review``
+
+Queue messages are bounded: a message that would not fit the Storage Queue limit is written
+in full to Blob Storage and the queue gets a small pointer to it (see ``enqueue_bounded``).
 """
 
 from __future__ import annotations
 
 import logging
+import json
 import os
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime
 from typing import Any, Protocol
+from xml.sax.saxutils import escape
 
 from . import rules
 from .decision import ChoiceAnswer, DecisionClient, DecisionError
@@ -28,7 +33,11 @@ from .decision import ChoiceAnswer, DecisionClient, DecisionError
 logger = logging.getLogger("alert_router")
 
 QUESTION = "route"
-MAX_ALERTS_PER_MESSAGE = 10
+# Storage Queue accepts at most 64 KiB per message, measured on the encoded message the SDK
+# sends inside an XML body. This app sends plain text (``messageEncoding: none`` in host.json),
+# so the budget is applied to the XML-escaped UTF-8 text. 48 KiB also leaves room for the 4/3
+# inflation if you switch the queues to base64 encoding (48 KiB * 4/3 = 64 KiB).
+MAX_QUEUE_MESSAGE_BYTES = 48 * 1024
 INSTRUCTIONS = (
     "You triage security and operations alerts for a security operations center. "
     "The state contains one or more related alerts for the same host or user, with asset context. "
@@ -55,7 +64,8 @@ ROUTE_OPTIONS = {
 class AlertStore(Protocol):
     def claim_fingerprint(self, fingerprint: str, bucket: int, alert: dict[str, Any]) -> str: ...
     def record_decision(self, record: dict[str, Any]) -> None: ...
-    def enqueue(self, queue_name: str, message: dict[str, Any]) -> None: ...
+    def enqueue(self, queue_name: str, text: str) -> None: ...
+    def save_payload(self, blob_name: str, text: str) -> None: ...
 
 
 Decider = Callable[[dict[str, Any]], ChoiceAnswer]
@@ -73,6 +83,37 @@ def _settings() -> dict[str, Any]:
         "min_confidence": float(os.environ.get("DECISION_MIN_CONFIDENCE", "0.5")),
         "max_concurrency": int(os.environ.get("DECISION_MAX_CONCURRENCY", "4")),
     }
+
+
+def queue_message_size(text: str) -> int:
+    """Bytes the message occupies in the Storage Queue request (XML-escaped UTF-8)."""
+    return len(escape(text).encode("utf-8"))
+
+
+def enqueue_bounded(store: AlertStore, queue_name: str, message: dict[str, Any]) -> str:
+    """Enqueue ``message``; if it is too large for a queue message, offload it to Blob Storage.
+
+    Returns the blob name when the payload was offloaded, otherwise ``""``. The pointer message
+    keeps only small, bounded fields, so it always fits. The consumer loads the full payload
+    from ``payload_blob``. The blob name is derived from the group ID, so a retried batch
+    overwrites the same blob instead of creating a new one.
+    """
+    text = json.dumps(message, separators=(",", ":"))
+    if queue_message_size(text) <= MAX_QUEUE_MESSAGE_BYTES:
+        store.enqueue(queue_name, text)
+        return ""
+    blob_name = f"{queue_name}/{message['group_id']}.json"
+    store.save_payload(blob_name, text)
+    pointer = {
+        "group_id": message["group_id"],
+        "routed_at": message["routed_at"],
+        "route": message["route"],
+        "alert_count": message["alert_count"],
+        "payload_blob": blob_name,
+        "payload_bytes": len(text.encode("utf-8")),
+    }
+    store.enqueue(queue_name, json.dumps(pointer, separators=(",", ":")))
+    return blob_name
 
 
 def _route_group(group: list[dict[str, Any]], decider: Decider, min_confidence: float) -> dict[str, Any]:
@@ -136,15 +177,15 @@ def route_batch(
         }
         queue = {"investigate": cfg["investigate_queue"], "review": cfg["review_queue"]}.get(record["route"])
         record["destination"] = f"queue:{queue}" if queue else "summary"
+        record["payload_blob"] = ""
         if queue:
             # Enqueue before recording, so a recorded decision always means the work was handed off.
-            # Storage queue messages are limited to 64 KB, so very large groups are trimmed.
-            store.enqueue(queue, {
+            record["payload_blob"] = enqueue_bounded(store, queue, {
                 "group_id": group_id,
                 "routed_at": routed_at,
                 "route": {k: record[k] for k in ("route", "source", "choice", "confidence", "probabilities", "reason")},
                 "alert_count": len(alerts),
-                "alerts": alerts[:MAX_ALERTS_PER_MESSAGE],
+                "alerts": alerts,
                 "assets": rules.asset_for(alerts[0]) if alerts else {},
                 **({"raw_event": payload} if payload is not None else {}),
             })
@@ -158,7 +199,7 @@ def route_batch(
         except rules.InvalidAlert as exc:
             raw = body.decode("utf-8", errors="replace") if isinstance(body, bytes | bytearray) else str(body)
             group_id = f"invalid-{now.strftime('%Y%m%dT%H%M%S')}-{index}"
-            finish(group_id, [], {"route": "review", "source": "invalid_event", "reason": str(exc)}, raw[:4000])
+            finish(group_id, [], {"route": "review", "source": "invalid_event", "reason": str(exc)}, raw)
             continue
 
         suppression = rules.match_suppression(alert)

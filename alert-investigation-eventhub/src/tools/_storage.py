@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-"""Stores investigation reports in Azure Blob Storage.
+"""Stores investigation reports and reads offloaded alert payloads in Azure Blob Storage.
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite),
 or the ``AzureWebJobsStorage__blobServiceUri`` setting with the app's managed identity
@@ -14,18 +14,17 @@ import json
 import os
 from typing import Any
 
-from azure.core.exceptions import ResourceExistsError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob import ContainerClient
 
-_container: ContainerClient | None = None
+_containers: dict[str, ContainerClient] = {}
 
 
-def get_container() -> ContainerClient:
-    global _container
-    if _container is not None:
-        return _container
+def get_container(container_name: str | None = None) -> ContainerClient:
+    container_name = container_name or os.environ.get("INVESTIGATIONS_CONTAINER", "investigations")
+    if container_name in _containers:
+        return _containers[container_name]
 
-    container_name = os.environ.get("INVESTIGATIONS_CONTAINER", "investigations")
     connection_string = os.environ.get("AzureWebJobsStorage", "")
     if connection_string:
         # Local development (Azurite): create the container on first use.
@@ -43,7 +42,7 @@ def get_container() -> ContainerClient:
             os.environ["AzureWebJobsStorage__blobServiceUri"], container_name, credential=credential
         )
 
-    _container = container
+    _containers[container_name] = container
     return container
 
 
@@ -55,3 +54,12 @@ def save_once(group_id: str, document: dict[str, Any]) -> bool:
     except ResourceExistsError:
         return False
     return True
+
+
+def load_payload(blob_name: str) -> str | None:
+    """Read an alert payload the router offloaded because it was too large for a queue message."""
+    container = get_container(os.environ.get("PAYLOADS_CONTAINER", "alert-payloads"))
+    try:
+        return container.download_blob(blob_name).readall().decode("utf-8")
+    except ResourceNotFoundError:
+        return None

@@ -15,7 +15,8 @@ This is the [IT helpdesk in Microsoft Teams scenario](https://learn.microsoft.co
                                                 ├─ get_password_reset_guidance  (self-service reset; never handles passwords)
                                                 ├─ create_software_request      (catalog rules, never grants admin, one ticket per message)
                                                 ├─ escalate_to_human            (it-service-desk queue, one per message)
-                                                └─ post_reply                   (records the reply once; says whether to post to Teams)
+                                                ├─ post_reply                   (records the reply once; says whether to post, or resend, in Teams)
+                                                └─ mark_reply_delivered         (after the Teams reply succeeds; only then is a redelivery a duplicate)
 
  POST /helpdesk/ask ──► helpdesk_test.agent.md ──► JSON answer + Blob: helpdesk/replies/{message_id}.json
  (same tools, no Teams connection needed)
@@ -23,7 +24,7 @@ This is the [IT helpdesk in Microsoft Teams scenario](https://learn.microsoft.co
 
 ## Why this scenario fits a hosted skill
 
-Helpdesk questions are written in every possible way, and most of the answers already exist in a knowledge base. The hosted skill understands the question, picks the right article or tool, and writes a short reply in plain language. The tools keep everything with side effects deterministic: tickets are created from the approved catalog, admin rights are never granted, and each Teams message gets at most one ticket, one escalation, and one reply — even when the trigger delivers it twice.
+Helpdesk questions are written in every possible way, and most of the answers already exist in a knowledge base. The hosted skill understands the question, picks the right article or tool, and writes a short reply in plain language. The tools keep everything with side effects deterministic: tickets are created from the approved catalog, admin rights are never granted, and each Teams message gets at most one ticket, one escalation, and one recorded reply, and that reply is resent until Teams confirms it was posted — even when the trigger delivers the message twice.
 
 The sample questions show the range:
 
@@ -43,6 +44,8 @@ The sample questions show the range:
 | `helpdesk_test` | HTTP `POST /helpdesk/ask` | JSON response and a blob record | No |
 
 Both skills share the same tools. `post_reply` writes every reply to `helpdesk/replies/{message_id}.json` and only tells the Teams skill to post in Teams when the Teams MCP server is configured. Until you connect Teams, the HTTP endpoint is the way to try the skill.
+
+Recording a reply and delivering it are tracked separately. After the Teams reply tool succeeds, the skill calls `mark_reply_delivered`, which writes `helpdesk/deliveries/{message_id}.json`. If the Teams call fails or the run stops before that, the reply stays pending: when the message is delivered again, `post_reply` returns `status: pending_delivery` with the originally recorded reply, and the skill posts that same text (no new ticket or escalation). Only a message whose delivery is recorded is treated as a duplicate. `mark_reply_delivered` rejects a message that has no recorded Teams reply. Delivery is at least once: if posting succeeds but the run stops before `mark_reply_delivered`, a redelivered message is answered a second time with the same text rather than not at all.
 
 ## Prerequisites
 
@@ -65,7 +68,7 @@ azd up
 `azd up` creates a resource group with:
 
 - A Flex Consumption function app running both hosted skills, with a user-assigned managed identity. The host uses the Experimental extension bundle, which includes the connector trigger.
-- A storage account (no shared key access) with the `helpdesk` container for `replies/`, `tickets/`, and `escalations/`.
+- A storage account (no shared key access) with the `helpdesk` container for `replies/`, `deliveries/`, `tickets/`, and `escalations/`.
 - A connector gateway (`Microsoft.Web/connectorGateways`, preview, in `westcentralus` by default) with:
   - A `teams` connection. It needs your consent before it can read or post messages (see [Connect Teams](#connect-teams)).
   - Access policies for the app's managed identity, your account, and the gateway itself.
@@ -193,7 +196,7 @@ Both functions register locally, but only the HTTP skill is reachable: the Teams
 - **Never grants admin rights.** `create_software_request` refuses any request that mentions local admin, elevated, or privileged access, and every ticket is created with `access_level: standard` and `admin_rights_granted: false` — whatever the model asks for.
 - **Catalog-only tickets.** Unknown software is escalated, unapproved software is declined with the approved alternative, and free software points to self-service.
 - **Never handles passwords.** Password help comes from fixed guidance in code that points to self-service reset, and the skill is told never to ask for or repeat passwords or codes.
-- **One action per message.** Tickets, escalations, and replies are keyed by the Teams message ID and written with `overwrite=False`, so a redelivered message creates nothing new and the skill doesn't reply twice.
+- **One action per message, and no lost replies.** Tickets, escalations, and replies are keyed by the Teams message ID and written with `overwrite=False`, so a redelivered message creates nothing new. A redelivered message is suppressed only after `deliveries/{message_id}.json` confirms the Teams reply was posted; until then the recorded reply is sent again.
 - **Escalate when unsure.** If no knowledge base article is a confident match, the question goes to the `it-service-desk` queue for a person.
 - **Narrow Teams access.** The MCP server exposes only the reply action, with the team and channel fixed in configuration. The skill can't read other chats or post anywhere else. `web_request` is disabled.
 - **Message text is data.** The skill treats each message as an employee's question, not as instructions.
@@ -215,7 +218,7 @@ The end-to-end test uses the HTTP skill, so it passes without a Teams connection
 - **`azd up` fails while uploading the package with `403 ... not authorized to perform this operation`.** The app's role assignments were just created and haven't reached Storage yet. Wait a minute and run `azd deploy`.
 - **The postdeploy hook says the connection is not authenticated.** Complete [Connect Teams](#connect-teams) step 1, then run `azd hooks run postdeploy`.
 - **The hook gives up waiting for the `connector_extension` key.** The host may still be starting. Run `azd hooks run postdeploy` again.
-- **Messages in the channel get no reply.** Check that the trigger config exists (`az rest --method get --uri "https://management.azure.com/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Web/connectorGateways/<gateway>/triggerconfigs?api-version=2026-05-01-preview"`), that `TEAMS_MCP_SERVER_URL` is set on the app, and the `teams_helpdesk` logs in Application Insights. The record in `helpdesk/replies/` shows whether the skill answered even if posting to Teams failed.
+- **Messages in the channel get no reply.** Check that the trigger config exists (`az rest --method get --uri "https://management.azure.com/subscriptions/<sub>/resourceGroups/<rg>/providers/Microsoft.Web/connectorGateways/<gateway>/triggerconfigs?api-version=2026-05-01-preview"`), that `TEAMS_MCP_SERVER_URL` is set on the app, and the `teams_helpdesk` logs in Application Insights. The record in `helpdesk/replies/` shows whether the skill answered; a missing `helpdesk/deliveries/` record for the same message ID means posting to Teams did not complete, and the reply is sent again the next time the message is delivered.
 - **The connector gateway isn't available in your region.** Connector gateways are in preview. Keep the default `CONNECTOR_GATEWAY_LOCATION=westcentralus` (only the gateway runs there), or set `ENABLE_TEAMS_CONNECTOR=false` and use the HTTP skill.
 
 ## Clean up

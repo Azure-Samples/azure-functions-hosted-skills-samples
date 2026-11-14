@@ -1,11 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-"""Storage for the router: dedupe fingerprints and decisions (Table), work queues (Queue).
+"""Storage for the router: dedupe fingerprints and decisions (Table), work queues (Queue),
+and oversized queue payloads (Blob).
 
 Uses the ``AzureWebJobsStorage`` connection: a connection string locally (Azurite), or the
-``AzureWebJobsStorage__tableServiceUri`` / ``__queueServiceUri`` settings with the app's
-managed identity in Azure.
+``AzureWebJobsStorage__tableServiceUri`` / ``__queueServiceUri`` / ``__blobServiceUri``
+settings with the app's managed identity in Azure.
 """
 
 from __future__ import annotations
@@ -32,11 +33,12 @@ def _connection_string() -> str:
 
 
 class AzureAlertStore:
-    """Real store. ``FakeAlertStore`` in the tests implements the same three methods."""
+    """Real store. ``FakeStore`` in the tests implements the same four methods."""
 
     def __init__(self) -> None:
         self.decisions_table = os.environ.get("DECISIONS_TABLE", "alertdecisions")
         self.fingerprints_table = os.environ.get("FINGERPRINTS_TABLE", "alertfingerprints")
+        self.payloads_container = os.environ.get("PAYLOADS_CONTAINER", "alert-payloads")
 
     @cache
     def _table(self, name: str):
@@ -62,6 +64,21 @@ class AzureAlertStore:
                 pass
             return queue
         return QueueClient(os.environ["AzureWebJobsStorage__queueServiceUri"], name, credential=_credential())
+
+    @cache
+    def _container(self):
+        from azure.storage.blob import ContainerClient
+
+        if _connection_string():
+            container = ContainerClient.from_connection_string(_connection_string(), self.payloads_container)
+            try:
+                container.create_container()
+            except ResourceExistsError:
+                pass
+            return container
+        return ContainerClient(
+            os.environ["AzureWebJobsStorage__blobServiceUri"], self.payloads_container, credential=_credential()
+        )
 
     def claim_fingerprint(self, fingerprint: str, bucket: int, alert: dict[str, Any]) -> Claim:
         """Record the first alert with this fingerprint in the window.
@@ -114,5 +131,10 @@ class AzureAlertStore:
         }
         self._table(self.decisions_table).upsert_entity(entity)
 
-    def enqueue(self, queue_name: str, message: dict[str, Any]) -> None:
-        self._queue(queue_name).send_message(json.dumps(message))
+    def enqueue(self, queue_name: str, text: str) -> None:
+        # The SDK's default (no encode policy) matches ``messageEncoding: none`` in host.json.
+        self._queue(queue_name).send_message(text)
+
+    def save_payload(self, blob_name: str, text: str) -> None:
+        # Overwrite: a retried batch writes the same group's payload again.
+        self._container().upload_blob(blob_name, text, overwrite=True, content_type="application/json")

@@ -157,7 +157,7 @@ def print_results(target: Target) -> None:
         print("No helpdesk records yet.")
     for name in blobs:
         doc = json.loads(_container(target).download_blob(name).readall())
-        summary = doc.get("outcome") or doc.get("ticket_id") or doc.get("escalation_id") or ""
+        summary = doc.get("outcome") or doc.get("ticket_id") or doc.get("escalation_id") or ("delivered" if doc.get("delivered_at") else "")
         print(f"{name}: {summary}")
 
 
