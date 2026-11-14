@@ -24,6 +24,9 @@ _SEVERITY_RANK = {name: rank for rank, name in enumerate(SEVERITIES)}
 _ALERT_ID = re.compile(r"^[A-Za-z0-9_.:-]{1,80}$")
 _ALERT_FIELDS = ("alert_id", "source", "rule_id", "title", "severity", "host", "user", "detected_at", "description", "evidence")
 MAX_DESCRIPTION = 2000
+# Short fields are also written to Table Storage (64 KiB per property), so they are bounded.
+MAX_TITLE = 500
+MAX_NAME = 256
 
 
 class InvalidAlert(ValueError):
@@ -61,11 +64,11 @@ def parse_alert(body: bytes | str | dict[str, Any], now: datetime | None = None)
         raise InvalidAlert(f"{alert_id}: rule_id is missing")
 
     alert["alert_id"] = alert_id
-    alert["rule_id"] = str(alert["rule_id"]).strip().upper()
-    alert["source"] = str(alert["source"] or "unknown").strip()
-    alert["title"] = str(alert["title"] or alert["rule_id"]).strip()
-    alert["host"] = str(alert["host"] or "").strip().lower()
-    alert["user"] = str(alert["user"] or "").strip().lower()
+    alert["rule_id"] = str(alert["rule_id"]).strip().upper()[:MAX_NAME]
+    alert["source"] = str(alert["source"] or "unknown").strip()[:MAX_NAME]
+    alert["title"] = str(alert["title"] or alert["rule_id"]).strip()[:MAX_TITLE]
+    alert["host"] = str(alert["host"] or "").strip().lower()[:MAX_NAME]
+    alert["user"] = str(alert["user"] or "").strip().lower()[:MAX_NAME]
     alert["description"] = str(alert["description"] or "")[:MAX_DESCRIPTION]
     alert["evidence"] = alert["evidence"] if isinstance(alert["evidence"], dict) else {}
 

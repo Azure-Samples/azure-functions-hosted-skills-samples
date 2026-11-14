@@ -75,7 +75,12 @@ def _recommendation(**overrides):
 
 def test_record_enforces_human_approval_for_non_standard_decisions(store):
     result = record_return_recommendation(_recommendation())
-    assert result == {"status": "recorded", "request_id": "RR-1001", "requires_human_approval": True}
+    assert result == {
+        "status": "recorded",
+        "record_id": "RR-1001",
+        "decision": "approve_exception",
+        "requires_human_approval": True,
+    }
     assert store["RR-1001"]["requires_human_approval"] is True
 
 
@@ -86,4 +91,59 @@ def test_record_is_idempotent(store):
 
 def test_record_rejects_unsafe_request_id(store):
     assert record_return_recommendation(_recommendation(request_id="../x"))["status"] == "rejected"
+    assert record_return_recommendation(_recommendation(request_id="msg-abc"))["status"] == "rejected"
+    assert store == {}
+
+
+def _malformed(trigger_message_id, **overrides):
+    values = {
+        "request_id": "",
+        "order_id": "",
+        "trigger_message_id": trigger_message_id,
+        "decision": "escalate",
+        "resolution": "none",
+        "requires_human_approval": True,
+        "reasons": ["The message is not valid JSON."],
+        "evidence": [],
+        "customer_reply_draft": "We could not read your request.",
+    }
+    values.update(overrides)
+    return _recommendation(**values)
+
+
+def test_distinct_malformed_messages_get_distinct_escalations(store):
+    first = record_return_recommendation(_malformed("6f1c2a7e-0001"))
+    second = record_return_recommendation(_malformed("6f1c2a7e-0002", request_id="RR-2001"))
+    assert first["status"] == second["status"] == "recorded"
+    assert set(store) == {"msg-6f1c2a7e-0001", "msg-6f1c2a7e-0002"}
+    assert all(doc["decision"] == "escalate" and doc["requires_human_approval"] for doc in store.values())
+    assert store["msg-6f1c2a7e-0002"]["request_id"] == "RR-2001"
+
+
+def test_redelivered_malformed_message_is_duplicate(store):
+    assert record_return_recommendation(_malformed("6f1c2a7e-0001"))["status"] == "recorded"
+    assert record_return_recommendation(_malformed("6f1c2a7e-0001")) == {
+        "status": "duplicate",
+        "record_id": "msg-6f1c2a7e-0001",
+    }
+
+
+def test_malformed_message_is_always_escalated(store):
+    result = record_return_recommendation(
+        _malformed("abc", decision="approve_standard", resolution="refund", requires_human_approval=False)
+    )
+    assert result["decision"] == "escalate"
+    assert store["msg-abc"]["resolution"] == "none"
+    assert store["msg-abc"]["requires_human_approval"] is True
+
+
+@pytest.mark.parametrize("request_id", ["unknown", "UNKNOWN", " Unknown "])
+def test_placeholder_request_id_is_rejected(store, request_id):
+    assert record_return_recommendation(_malformed("abc", request_id=request_id))["status"] == "rejected"
+    assert store == {}
+
+
+@pytest.mark.parametrize("trigger_message_id", ["", "  ", "../x", "a" * 129])
+def test_malformed_message_requires_valid_trigger_message_id(store, trigger_message_id):
+    assert record_return_recommendation(_malformed(trigger_message_id))["status"] == "rejected"
     assert store == {}

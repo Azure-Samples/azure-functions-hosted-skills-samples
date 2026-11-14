@@ -11,6 +11,10 @@ def test_validate_flags_missing_unsafe_and_unreviewed_decisions():
         "e2e-abc123-CLM-24002": {**ok, "decision": "request_info", "requires_human_review": False},
         "e2e-abc123-CLM-24003": {**ok, "decision": "approve", "amount_claimed": 48500, "fraud_signals": [{"code": "x"}]},
         "e2e-abc123-CLM-24004": {"decision": "refer_to_adjuster", "reasons": ["r"], "requires_human_review": True},
+        "e2e-abc123-CLM-24006": {
+            "decision": "approve", "reasons": ["r"], "workflow_id": "wf", "check_mismatches": ["m"],
+            "documents": {"missing": [{"type": "photos"}]},
+        },
     }
     errors = validate(results, [*results, "e2e-abc123-CLM-24005"])
     assert errors == [
@@ -18,6 +22,8 @@ def test_validate_flags_missing_unsafe_and_unreviewed_decisions():
         "e2e-abc123-CLM-24003: approved with fraud signals",
         "e2e-abc123-CLM-24003: approved above the auto-approve limit 10000.0",
         "e2e-abc123-CLM-24004: no workflow_id; the decision was not written by the workflow",
+        "e2e-abc123-CLM-24006: approved although check results did not match the recomputed checks",
+        "e2e-abc123-CLM-24006: approved with coverage issues or missing documents",
         "e2e-abc123-CLM-24005: no decision recorded",
     ]
 

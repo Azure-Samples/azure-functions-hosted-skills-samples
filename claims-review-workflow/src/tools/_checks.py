@@ -227,6 +227,47 @@ def check_claim_history(
     }
 
 
+CHECKS = {"coverage": "coverage", "documents": "documents", "history": "claim_history"}
+"""Workflow argument name -> check name, for the three check results the publisher receives."""
+
+DECISION_FIELDS = {
+    "coverage": ("covered", "estimated_payout", "issues"),
+    "documents": ("complete", "missing", "issues"),
+    "claim_history": ("fraud_signals",),
+}
+"""Fields of each check result that the decision rule depends on."""
+
+
+def run_checks(claim: dict[str, Any], exists: Callable[[str], bool]) -> dict[str, dict[str, Any]]:
+    """Run all three checks for a normalized claim, keyed by workflow argument name."""
+    return {
+        "coverage": check_coverage(claim),
+        "documents": check_documents(claim, exists),
+        "history": check_claim_history(claim),
+    }
+
+
+def find_check_mismatches(reported: dict[str, Any], recomputed: dict[str, dict[str, Any]]) -> list[str]:
+    """Compare check results passed through the workflow with the ones recomputed in code.
+
+    Returns one message per argument whose decision-relevant fields differ, or that is
+    missing, malformed, or belongs to another claim.
+    """
+    mismatches: list[str] = []
+    for arg, check in CHECKS.items():
+        expected = recomputed[arg]
+        value = reported.get(arg)
+        if not isinstance(value, dict) or value.get("check") != check:
+            mismatches.append(f"{arg} is not a {check} check result.")
+        elif value.get("claim_id") != expected["claim_id"]:
+            mismatches.append(f"{arg} belongs to claim {value.get('claim_id')!r}, not {expected['claim_id']!r}.")
+        else:
+            fields = [f for f in DECISION_FIELDS[check] if value.get(f) != expected.get(f)]
+            if fields:
+                mismatches.append(f"{arg} differs from the recomputed {check} check in: {', '.join(fields)}.")
+    return mismatches
+
+
 def decide(
     claim: dict[str, Any],
     coverage: dict[str, Any],
@@ -234,15 +275,17 @@ def decide(
     history: dict[str, Any],
     recommended: str | None = None,
     limit: Decimal | None = None,
+    mismatches: list[str] | None = None,
 ) -> dict[str, Any]:
     """Apply the decision rule. The strictest outcome wins.
 
-    Fraud signals, a coverage problem, or an amount above the auto-approve limit always
-    refer the claim to an adjuster. Missing documents request information. A model
-    recommendation can only make the outcome stricter, never more lenient.
+    Fraud signals, a coverage problem, an amount above the auto-approve limit, or check
+    results that do not match the recomputed checks always refer the claim to an adjuster.
+    Missing documents request information. A model recommendation can only make the
+    outcome stricter, never more lenient.
     """
     limit = auto_approve_limit() if limit is None else limit
-    refer: list[str] = []
+    refer: list[str] = [f"Check mismatch: {m}" for m in mismatches or []]
     info: list[str] = []
     if history["fraud_signals"]:
         refer.extend(f"Fraud signal ({s['code']}): {s['detail']}" for s in history["fraud_signals"])

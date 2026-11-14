@@ -83,7 +83,7 @@ RR-1001: approve_exception / replacement (needs approval)
   - Damage was reported 2 days after delivery (T-2207), so exception OG-EX-1 applies.
 ```
 
-Each recommendation is a JSON document in the `return-recommendations` container. Send one sample with `--sample RR-1003`. `python scripts/demo.py e2e` sends uniquely named copies and checks that each one was recorded with reasons and the approval rule.
+Each recommendation is a JSON document in the `return-recommendations` container, named after the request's `request_id`. Send one sample with `--sample RR-1003`. `python scripts/demo.py e2e` sends uniquely named copies plus two different malformed messages, and checks that each sample was recorded with reasons and the approval rule and that each malformed message got its own `escalate` record.
 
 Watch the run in Application Insights, or stream logs with `func azure functionapp logstream <app-name>`.
 
@@ -122,6 +122,7 @@ Locally the app uses your `az login` identity for Foundry.
 - **Recommend, don't act.** The skill records a recommendation. Refunds and replacements stay in your order system behind its own approval flow.
 - **Approval enforced in code.** `record_return_recommendation` forces `requires_human_approval` for every decision other than `approve_standard`, whatever the model says.
 - **Idempotent.** Queue messages can be delivered more than once. The recommendation is written with `overwrite=False`; a retry returns `duplicate` instead of a second write.
+- **Malformed messages are never collapsed.** A message that is not valid JSON or lacks `request_id`/`order_id` is stored as `msg-<trigger message ID>` (the Storage queue message `id` or the Service Bus `message_id`), which is distinct per message and stable across redelivery. The tool rejects placeholder IDs such as `unknown` and always records these as `escalate`. With Service Bus, set a `message_id` when you send (the demo does). The skill copies the trigger message ID from the trigger data, because the runtime doesn't yet pass trigger context to tools ([Azure/azure-functions-agents-runtime#292](https://github.com/Azure/azure-functions-agents-runtime/issues/292)).
 - **Facts from code.** `days_since_delivery` is calculated by `get_order`, not by the model.
 - **No extra reach.** `web_request` and MCP are disabled for this skill; it can only call its four tools.
 - **Poison messages.** After 5 failed attempts the message moves to `customer-returns-poison` (Storage) or the dead-letter queue (Service Bus).

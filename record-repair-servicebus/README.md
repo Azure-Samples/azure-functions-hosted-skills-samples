@@ -171,7 +171,7 @@ The prompt asks for the right behavior; the tools enforce it in code, whatever t
 
 Known limitations:
 
-- The tool trusts the `original_body` the model passes in. A model could pass a different body; the schema check and the `repair-` loop guard still apply.
+- **The format-only check is only as good as the original body the model passes in.** `requeue_repaired_record` compares the corrected record with `original_body` and `original_message_id`, and both come from the model. A model that substitutes a different body can make an invented value pass the format-only check. The schema check, the `repair-` loop guard, and `ingest`'s validation still apply. This is a current runtime limitation: a skill declared with a `trigger:` in Markdown passes the trigger message to the model in the prompt, but not to its tools, so a tool can't verify the body against the actual dead-lettered message. See [Azure/azure-functions-agents-runtime#292](https://github.com/Azure/azure-functions-agents-runtime/issues/292).
 - If a skill run itself fails (for example, the model is unavailable), the message is returned to the dead-letter queue and retried; a dead-letter queue has no further dead-lettering.
 
 ## Test

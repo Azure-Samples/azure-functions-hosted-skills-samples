@@ -180,12 +180,17 @@ Locally the app uses your `az login` identity for Foundry, and the tools create 
   - the policy name or expense ID is invalid.
 
   The skill gets the errors back and can correct itself.
-- **Exactly one decision per expense.** Before sending, the tool writes `decisions/<expenseId>.json` with `overwrite=False`. A retried queue message or a second call returns `duplicate` and sends nothing. If the send fails, the marker is removed so a retry can succeed.
+- **At most one decision per expense.** Before sending, the tool writes `decisions/<expenseId>.json` with `overwrite=False`. A retried queue message or a second call returns `duplicate` and sends nothing. If the send fails, the marker is removed so a later attempt can succeed.
 - **Only known documents.** `read_policy` accepts only `*.md` names that exist in the `policies` container. Paths like `../x.md` or `a/b.md` are rejected.
 - **Message text is data.** The skill instructions treat the request as content to evaluate, not as instructions to follow.
 - **No extra reach.** `web_request` and MCP are disabled; the skill can only call its three tools.
 - **Poison messages.** `host.json` sets `messageEncoding: none` so plain-text messages work. After 5 failed attempts a message moves to `expense-requests-poison`.
 - **Optional model gateway.** With the [AI Gateway](#optional-ai-gateway) enabled, every model call is authenticated, rate-limited, and screened for prompt attacks before it reaches Foundry.
+
+Known limitations:
+
+- **A failed send doesn't retry the queue message.** When sending the decision fails, `route_expense_decision` removes the marker and returns `status: error`, and the skill stops and reports the error. The function invocation still completes successfully, so the request message is removed from `expense-requests` without a decision being routed. Send the request again to retry it. This is a current runtime limitation: a tool error goes back to the model, and a tool can't fail the triggered invocation so the queue retries it. See [Azure/azure-functions-agents-runtime#293](https://github.com/Azure/azure-functions-agents-runtime/issues/293).
+- If the app stops after the marker is written but before the decision is sent, a retried message returns `duplicate` and nothing is sent. Remove `decisions/<expenseId>.json` and send the request again.
 
 ## Optional: AI Gateway
 

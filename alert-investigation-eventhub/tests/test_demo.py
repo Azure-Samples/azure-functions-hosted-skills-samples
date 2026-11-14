@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import json
 from datetime import UTC, datetime
 
 import demo
@@ -22,14 +23,17 @@ def good_state():
         "ALR-1008": [rec("ALR-1008-r", "routine", "decision1", ["ALR-1008-r"], probs)],
         "ALR-1009": [rec("ALR-1009-r", "suppressed", "suppression_rule", ["ALR-1009-r"])],
         "ALR-1010": [rec("ALR-1010-r", "aggregate", "decision1", ["ALR-1010-r"], probs)],
+        "ALR-1011": [{**rec("ALR-1011-r", "investigate", "critical_bypass", ["ALR-1011-r"]),
+                      "payload_blob": "alerts-investigate/ALR-1011-r.json"}],
     }
     report = {"verdict": "malicious", "evidence": ["x"], "requires_human_approval": True,
               "recommended_containment": [{"action": "isolate_host", "target": "fin-ws-22", "executed": False}]}
     return {
         "records": {**{d: [] for d in demo.DUPLICATES}, **records},
         "duplicate_count": 4,
-        "reports": {"ALR-1001-r": report, "ALR-1002-r": dict(report)},
-        "investigate_groups": ["ALR-1001-r", "ALR-1002-r"],
+        "reports": {"ALR-1001-r": report, "ALR-1002-r": dict(report),
+                    "ALR-1011-r": {**report, "evidence": ["rclone.exe uploaded 1,800 files"]}},
+        "investigate_groups": ["ALR-1001-r", "ALR-1002-r", "ALR-1011-r"],
     }
 
 
@@ -80,3 +84,19 @@ def test_incomplete_until_reports_exist():
     state = good_state()
     del state["reports"]["ALR-1002-r"]
     assert not demo.is_complete(state)
+
+
+def test_oversized_alert_is_larger_than_a_queue_message():
+    alert = demo.oversized_alert("abc123", NOW)
+    assert len(json.dumps(alert)) > 2 * 64 * 1024
+    assert alert["alert_id"] == "ALR-1011-abc123" and alert["severity"] == "critical"
+
+
+def test_validate_fails_when_oversized_alert_was_not_offloaded_or_read():
+    state = good_state()
+    state["records"]["ALR-1011"][0]["payload_blob"] = ""
+    assert any("ALR-1011" in e for e in demo.validate(state)[0])
+
+    state = good_state()
+    state["reports"]["ALR-1011-r"] = {**state["reports"]["ALR-1011-r"], "evidence": ["nothing specific"]}
+    assert any("ALR-1011" in e for e in demo.validate(state)[0])

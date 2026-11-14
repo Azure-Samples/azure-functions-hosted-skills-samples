@@ -12,7 +12,7 @@ var storageQueueDataContributorRoleId = '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
 var storageTableDataContributorRoleId = '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
 var monitoringMetricsPublisherRoleId = '3913510d-42f4-4e42-8a64-420c390055eb'
 
-// Blob: host storage, Event Hubs checkpoints, and investigation reports.
+// Blob: host storage, Event Hubs checkpoints, investigation reports, and offloaded alert payloads.
 // Queue: alerts-investigate and alerts-review. Table: routing decisions and dedupe fingerprints.
 var appStorageRoles = [
   storageBlobDataOwnerRoleId

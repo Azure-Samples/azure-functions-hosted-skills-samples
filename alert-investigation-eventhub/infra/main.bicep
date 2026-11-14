@@ -64,6 +64,8 @@ var localConsumerGroupName = 'local-dev'
 var investigateQueueName = 'alerts-investigate'
 var reviewQueueName = 'alerts-review'
 var investigationsContainerName = 'investigations'
+// Alert groups too large for a 64 KiB queue message; the queue gets a pointer to the blob.
+var payloadsContainerName = 'alert-payloads'
 var decisionsTableName = 'alertdecisions'
 var fingerprintsTableName = 'alertfingerprints'
 
@@ -134,6 +136,7 @@ module storage 'br/public:avm/res/storage/storage-account:0.8.3' = {
       containers: [
         { name: deploymentStorageContainerName }
         { name: investigationsContainerName }
+        { name: payloadsContainerName }
       ]
     }
     queueServices: {
@@ -214,6 +217,7 @@ module api './app/api.bicep' = {
       FINGERPRINTS_TABLE: fingerprintsTableName
       // Stage 2: investigation hosted skill.
       INVESTIGATIONS_CONTAINER: investigationsContainerName
+      PAYLOADS_CONTAINER: payloadsContainerName
     }
   }
 }
@@ -263,6 +267,7 @@ output EVENTHUB_LOCAL_CONSUMER_GROUP string = eventHubs.outputs.localConsumerGro
 output INVESTIGATE_QUEUE string = investigateQueueName
 output REVIEW_QUEUE string = reviewQueueName
 output INVESTIGATIONS_CONTAINER string = investigationsContainerName
+output PAYLOADS_CONTAINER string = payloadsContainerName
 output DECISIONS_TABLE string = decisionsTableName
 output FINGERPRINTS_TABLE string = fingerprintsTableName
 output DECISION_ENDPOINT string = foundry.outputs.accountEndpoint

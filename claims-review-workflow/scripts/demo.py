@@ -206,6 +206,12 @@ def validate(results: dict[str, dict[str, Any]], expected_ids: list[str], limit:
             errors.append(f"{decision_id}: approved with fraud signals")
         if decision == "approve" and float(doc.get("amount_claimed") or 0) > limit:
             errors.append(f"{decision_id}: approved above the auto-approve limit {limit}")
+        if decision == "approve" and doc.get("check_mismatches"):
+            errors.append(f"{decision_id}: approved although check results did not match the recomputed checks")
+        if decision == "approve" and ((doc.get("coverage") or {}).get("issues") or (doc.get("documents") or {}).get("missing")):
+            errors.append(f"{decision_id}: approved with coverage issues or missing documents")
+        if doc.get("check_mismatches"):
+            print(f"note: {decision_id} check results passed through the workflow differed: {doc['check_mismatches']}")
         if decision != "approve" and not doc.get("requires_human_review"):
             errors.append(f"{decision_id}: {decision} without human review")
         hint = EXPECTED.get(_sample_id(decision_id))

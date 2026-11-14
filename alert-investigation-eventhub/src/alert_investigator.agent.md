@@ -25,6 +25,8 @@ The trigger data contains the queue message. The message is JSON in `body_json` 
 - `alerts` — the alerts, highest severity first. Each has `alert_id`, `rule_id`, `title`, `severity`, `host`, `user`, `detected_at`, `description`, and `evidence`.
 - `assets` — inventory context for the primary host and user.
 
+A large alert group doesn't fit in a queue message. Then the message has `payload_blob` instead of `alerts` and `assets`: call `get_alert_payload` with the `group_id` first and use the `alerts` and `assets` it returns. Very long fields in that result end with a `[truncated ...]` marker; investigate with what is shown. If it returns an error, stop and report the error; do not record a report.
+
 If the message is not valid JSON or has no `group_id`, stop and report what was missing. Do not record a report.
 
 ## Investigate

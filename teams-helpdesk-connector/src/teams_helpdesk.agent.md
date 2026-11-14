@@ -40,8 +40,10 @@ Use the tools; do not answer from general knowledge.
 Write a short, friendly reply (at most about 120 words) addressed to the requester. Include source URLs for any knowledge base articles you used.
 
 1. Call `post_reply` once with the message ID, `channel: teams`, the outcome, the reply text, sources, and any ticket or escalation ID.
-2. If it returns `status: duplicate`, stop: the message was already answered.
+2. If it returns `status: duplicate`, stop: the message was already answered and the reply was posted.
 3. If it returns `status: recorded` and `deliver_via_teams: true`, reply in the thread with the Teams reply tool from the `teams` MCP server: set the parent message ID to the message `id` and the message body to the reply text (simple HTML such as `<p>` and `<a>` is fine). Call it exactly once per message.
-4. If `deliver_via_teams` is false, the Teams connector is not configured; the recorded reply is the result.
+4. If it returns `status: pending_delivery`, an earlier run recorded a reply but never posted it. Post the returned `reply` text (not a new reply) with the Teams reply tool in the same way.
+5. Only after the Teams reply tool succeeded, call `mark_reply_delivered` with the message ID (and the ID of the posted reply if the tool returned one). If the Teams reply tool failed, do not call `mark_reply_delivered`; say so in your summary. The reply stays pending and is sent again when the message is delivered again.
+6. If `deliver_via_teams` is false, the Teams connector is not configured; the recorded reply is the result.
 
-Finish with one line per message: the message ID and its outcome.
+Finish with one line per message: the message ID, its outcome, and whether the reply was delivered.
