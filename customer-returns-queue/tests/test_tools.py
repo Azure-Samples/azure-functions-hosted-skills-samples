@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import json
+import re
 from pathlib import Path
 
 import _recommendation_store
@@ -92,6 +93,7 @@ def test_record_is_idempotent(store):
 def test_record_rejects_unsafe_request_id(store):
     assert record_return_recommendation(_recommendation(request_id="../x"))["status"] == "rejected"
     assert record_return_recommendation(_recommendation(request_id="msg-abc"))["status"] == "rejected"
+    assert record_return_recommendation(_recommendation(request_id="msg_abc"))["status"] == "rejected"
     assert store == {}
 
 
@@ -143,7 +145,24 @@ def test_placeholder_request_id_is_rejected(store, request_id):
     assert store == {}
 
 
-@pytest.mark.parametrize("trigger_message_id", ["", "  ", "../x", "a" * 129])
+@pytest.mark.parametrize("trigger_message_id", ["", "  ", "a\nb", "a" * 129])
 def test_malformed_message_requires_valid_trigger_message_id(store, trigger_message_id):
     assert record_return_recommendation(_malformed(trigger_message_id))["status"] == "rejected"
     assert store == {}
+
+
+@pytest.mark.parametrize("trigger_message_id", ["tenant-42:order.1234", "../x", "a b", "注文/1", "x" * 127 + ":"])
+def test_free_form_service_bus_message_id_gets_a_safe_key(store, trigger_message_id):
+    result = record_return_recommendation(_malformed(trigger_message_id))
+    assert result["status"] == "recorded"
+    record_id = result["record_id"]
+    assert re.fullmatch(r"msg_[0-9a-f]{64}", record_id)
+    assert store[record_id]["trigger_message_id"] == trigger_message_id
+    assert record_return_recommendation(_malformed(trigger_message_id))["status"] == "duplicate"
+
+
+def test_safe_and_hashed_message_ids_do_not_collide(store):
+    ids = ["order.1", "order:1", "order-1", " order-1"]
+    record_ids = {record_return_recommendation(_malformed(i))["record_id"] for i in ids}
+    assert len(record_ids) == len(ids)
+    assert "msg-order-1" in record_ids

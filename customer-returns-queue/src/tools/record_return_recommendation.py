@@ -9,15 +9,19 @@ in your order system behind its own approval process.
 Each recommendation is stored once under a record ID:
 
 - a well-formed request uses its ``request_id``;
-- a malformed request (invalid JSON, or no ``request_id``/``order_id``) uses
-  ``msg-<trigger message ID>``. The trigger message ID is distinct per message and
-  stable across redelivery, so every malformed message gets its own escalation and
-  a redelivered one is reported as a duplicate.
+- a malformed request (invalid JSON, or no ``request_id``/``order_id``) is keyed by
+  its trigger message ID, which is distinct per message and stable across redelivery,
+  so every malformed message gets its own escalation and a redelivered one is reported
+  as a duplicate. An ID made only of letters, digits, ``-`` and ``_`` is stored as
+  ``msg-<ID>``. Any other ID (Service Bus ``MessageId`` is a free-form string of up to
+  128 characters, such as ``tenant-42:order.1234``) is stored as ``msg_<SHA-256 of ID>``
+  so it is always a safe blob name. The original ID is kept in the record.
 
 Do not add ``from __future__ import annotations`` here: the runtime loads tool
 files dynamically and pydantic must resolve the model's types at import time.
 """
 
+import hashlib
 import re
 from datetime import UTC, datetime
 from typing import Any, Literal
@@ -26,8 +30,10 @@ import _recommendation_store
 from pydantic import BaseModel, Field
 
 _REQUEST_ID = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
-_TRIGGER_MESSAGE_ID = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
+_SAFE_MESSAGE_ID = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
+_MAX_MESSAGE_ID_LENGTH = 128
 _FALLBACK_PREFIX = "msg-"
+_HASHED_PREFIX = "msg_"
 _PLACEHOLDER_IDS = {"unknown", "none", "null", "n/a", "missing"}
 
 
@@ -40,8 +46,8 @@ class ReturnRecommendation(BaseModel):
     trigger_message_id: str = Field(
         default="",
         description=(
-            "ID of the trigger message: `id` for a Storage queue trigger, `message_id` for a Service Bus "
-            "trigger. Required when request_id or order_id is missing."
+            "ID of the trigger message, copied exactly: `id` for a Storage queue trigger, `message_id` for a "
+            "Service Bus trigger. Required when request_id or order_id is missing."
         ),
     )
     decision: Literal["approve_standard", "approve_exception", "decline", "escalate"]
@@ -61,23 +67,31 @@ def _record_id(request_id: str, order_id: str, trigger_message_id: str) -> tuple
     if request_id and order_id:
         if not _REQUEST_ID.match(request_id):
             return None, "request_id must be 1-64 letters, digits, '-' or '_'."
-        if request_id.lower().startswith(_FALLBACK_PREFIX):
-            return None, f"request_id must not start with '{_FALLBACK_PREFIX}'."
+        if request_id.lower().startswith((_FALLBACK_PREFIX, _HASHED_PREFIX)):
+            return None, f"request_id must not start with '{_FALLBACK_PREFIX}' or '{_HASHED_PREFIX}'."
         return request_id, None
     # Malformed request: key it by the trigger message so distinct messages never collapse.
-    if not _TRIGGER_MESSAGE_ID.match(trigger_message_id):
+    if (
+        not trigger_message_id.strip()
+        or len(trigger_message_id) > _MAX_MESSAGE_ID_LENGTH
+        or any(ord(c) < 0x20 or ord(c) == 0x7F for c in trigger_message_id)
+    ):
         return None, (
-            "A malformed request needs trigger_message_id (Storage queue `id` or Service Bus `message_id`): "
-            "1-128 letters, digits, '-' or '_'."
+            "A malformed request needs trigger_message_id (Storage queue `id` or Service Bus `message_id`), "
+            "copied exactly: 1-128 characters with no control characters."
         )
-    return f"{_FALLBACK_PREFIX}{trigger_message_id}", None
+    if _SAFE_MESSAGE_ID.match(trigger_message_id):
+        return f"{_FALLBACK_PREFIX}{trigger_message_id}", None
+    digest = hashlib.sha256(trigger_message_id.encode("utf-8")).hexdigest()
+    return f"{_HASHED_PREFIX}{digest}", None
 
 
 def record_return_recommendation(recommendation: ReturnRecommendation) -> dict[str, Any]:
     """Record the recommendation for a return request so a support agent can review it. Call once per request."""
     request_id = recommendation.request_id.strip()
     order_id = recommendation.order_id.strip()
-    trigger_message_id = recommendation.trigger_message_id.strip()
+    # Not stripped: a Service Bus MessageId is free-form, and the key must match it exactly.
+    trigger_message_id = recommendation.trigger_message_id
     record_id, error = _record_id(request_id, order_id, trigger_message_id)
     if record_id is None:
         return {"status": "rejected", "error": error}
