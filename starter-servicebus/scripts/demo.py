@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-"""Send sample orders to Service Bus and check that the hosted skill ran.
+"""Send sample orders to Service Bus and run a best-effort hosted-skill smoke check.
 
 Usage (from the template folder):
 
     python scripts/demo.py send                  # send all samples to the azd environment's queue
     python scripts/demo.py send --sample ORD-2001
-    python scripts/demo.py e2e                   # send unique copies and wait for successful runs
+    python scripts/demo.py e2e                   # send unique copies and check for successful invocations
 
 Service Bus has no Azurite emulator, so ``func start`` also listens to the deployed namespace.
 The review result is in the function logs (and in your inbox when TO_EMAIL is set).
@@ -76,8 +76,10 @@ def count_runs(resource_id: str, since: datetime) -> tuple[int, int]:
     from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 
     query = (
-        f"requests | where timestamp > datetime({since.isoformat()}) and operation_Name == '{FUNCTION_NAME}'"
-        " | summarize succeeded = countif(success == true), failed = countif(success == false)"
+        f"traces | where timestamp > datetime({since.isoformat()}) "
+        f"and message startswith \"Executed 'Functions.{FUNCTION_NAME}' (\" "
+        "| summarize succeeded = countif(message contains '(Succeeded'), "
+        "failed = countif(message contains '(Failed')"
     )
     result = LogsQueryClient(credential()).query_resource(resource_id, query, timespan=timedelta(days=1))
     if result.status != LogsQueryStatus.SUCCESS or not result.tables or not result.tables[0].rows:
@@ -97,13 +99,13 @@ def e2e(timeout: int) -> int:
     succeeded = failed = 0
     while time.monotonic() < deadline:
         succeeded, failed = count_runs(resource_id, started)
-        print(f"waiting... {succeeded}/{len(messages)} runs succeeded, {failed} failed")
+        print(f"waiting... saw {succeeded}/{len(messages)} successful invocations, {failed} failed")
         if succeeded >= len(messages):
-            print("e2e passed")
+            print("smoke check passed")
             return 0
         time.sleep(20)
-    print(f"FAIL {succeeded}/{len(messages)} runs succeeded ({failed} failed)", file=sys.stderr)
-    print("e2e failed")
+    print(f"FAIL saw {succeeded}/{len(messages)} successful invocations ({failed} failed)", file=sys.stderr)
+    print("smoke check failed")
     return 1
 
 

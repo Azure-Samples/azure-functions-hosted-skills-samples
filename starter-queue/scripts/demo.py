@@ -1,13 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-"""Send sample support messages and check that the hosted skill ran.
+"""Send sample support messages and run a best-effort hosted-skill smoke check.
 
 Usage (from the template folder):
 
     python scripts/demo.py send                  # send all samples to the deployed app
     python scripts/demo.py send --sample T-1001
-    python scripts/demo.py e2e                   # send unique copies and wait for successful runs
+    python scripts/demo.py e2e                   # send unique copies and check for successful invocations
 
 Add ``--local`` to ``send`` to target ``func start`` with Azurite instead of the azd environment.
 The triage result is in the function logs (and in your inbox when TO_EMAIL is set).
@@ -103,13 +103,13 @@ def e2e(timeout: int) -> int:
     succeeded = failed = 0
     while time.monotonic() < deadline:
         succeeded, failed = count_runs(resource_id, started)
-        print(f"waiting... {succeeded}/{len(messages)} runs succeeded, {failed} failed")
+        print(f"waiting... saw {succeeded}/{len(messages)} successful invocations, {failed} failed")
         if succeeded >= len(messages):
-            print("e2e passed")
+            print("smoke check passed")
             return 0
         time.sleep(20)
-    print(f"FAIL {succeeded}/{len(messages)} runs succeeded ({failed} failed)", file=sys.stderr)
-    print("e2e failed")
+    print(f"FAIL saw {succeeded}/{len(messages)} successful invocations ({failed} failed)", file=sys.stderr)
+    print("smoke check failed")
     return 1
 
 

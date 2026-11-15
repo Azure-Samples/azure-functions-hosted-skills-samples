@@ -50,12 +50,13 @@ All connections use the managed identity. Your signed-in account also gets data-
 ```bash
 cd starter-blob
 azd auth login
+az login
 azd env new starter-blob
 azd env set TO_EMAIL you@example.com   # optional: email each summary
 azd up
 ```
 
-If you set `TO_EMAIL`, authorize the Office 365 connection once: open the Connector Namespace (`cg-...`) in the Azure portal, select the `office365` connection, and sign in. Without `TO_EMAIL`, results are only logged.
+If you set `TO_EMAIL`, authorize the Office 365 connection once: open the Connector Namespace (`cg-...`) in the Azure portal, select the `office365` connection, and sign in. Without `TO_EMAIL`, no email is sent.
 
 ## Try it
 
@@ -77,9 +78,9 @@ For `team-sync-notes.md`, expect something like:
  "action_items": ["Carla: get tent photos from the studio by 14 June", "Ben: draft the boot size guide by 10 June", "Dev: pull returns by product for the July review"]}
 ```
 
-Find the result in Application Insights (`traces` for the `summarize_document` operation), or in your inbox when `TO_EMAIL` is set. You can also upload files in the Azure portal or Storage Explorer.
+Find invocation details in Application Insights (`traces` for the `summarize_document` operation), or the result in your inbox when `TO_EMAIL` is set. You can also upload files in the Azure portal or Storage Explorer.
 
-`python scripts/demo.py e2e` uploads unique copies of the samples and waits until Application Insights shows a successful run for each.
+`python scripts/demo.py e2e` uploads unique copies and runs a best-effort smoke check for successful invocations in Application Insights. It does not correlate invocations with the uploaded files, so it is not proof that each sample was processed; unrelated runs or telemetry delays can affect the result.
 
 ## Run locally
 

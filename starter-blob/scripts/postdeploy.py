@@ -85,11 +85,13 @@ def main() -> int:
     print(f"Connecting Event Grid topic '{topic_name}' to {app_name}/{FUNCTION_NAME}...")
     host = az(
         "functionapp", "show", "-g", resource_group, "-n", app_name,
+        "--subscription", subscription_id,
         "--query", "properties.defaultHostName", "-o", "tsv",
     )
     key = retry(
         lambda: az(
             "functionapp", "keys", "list", "-g", resource_group, "-n", app_name,
+            "--subscription", subscription_id,
             "--query", "systemKeys.blobs_extension", "-o", "tsv",
         ),
         "blobs_extension key",

@@ -40,7 +40,9 @@ azd env set TO_EMAIL you@example.com   # optional: email each triage result
 azd up
 ```
 
-If you set `TO_EMAIL`, authorize the Office 365 connection once: open the Connector Namespace (`cg-...`) in the Azure portal, select the `office365` connection, and sign in. Without `TO_EMAIL`, results are only logged.
+If you set `TO_EMAIL`, authorize the Office 365 connection once: open the Connector Namespace (`cg-...`) in the Azure portal, select the `office365` connection, and sign in. Without `TO_EMAIL`, no email is sent.
+
+By default, the hosted-skills runtime does not include the full model response in traces. To inspect sample JSON in Application Insights, add `ENABLE_SENSITIVE_DATA=true` to the Function App's application settings and restart the app. This exposes full model responses in logs; use it only with sample or otherwise non-sensitive data, since responses may contain personal data and are subject to your log access and retention settings.
 
 ## Try it
 
@@ -61,9 +63,9 @@ Each message starts one run. The skill ends with the triage as JSON, for example
  "suggested_reply": "Hi Maria, I'm sorry about the double charge on order 58213..."}
 ```
 
-Find it in Application Insights (`traces` for the `support_triage` operation), or in your inbox when `TO_EMAIL` is set. You can also put any JSON or plain-text message on the queue from the Azure portal.
+Find invocation details in Application Insights (`traces` for the `support_triage` operation), or the result in your inbox when `TO_EMAIL` is set. You can also put any JSON or plain-text message on the queue from the Azure portal.
 
-`python scripts/demo.py e2e` sends unique copies of the samples and waits until Application Insights shows a successful run for each.
+`python scripts/demo.py e2e` sends unique copies and runs a best-effort smoke check for successful invocations in Application Insights. It does not correlate invocations with the submitted messages, so it is not proof that each sample was processed; unrelated runs or telemetry delays can affect the result.
 
 ## Run locally
 

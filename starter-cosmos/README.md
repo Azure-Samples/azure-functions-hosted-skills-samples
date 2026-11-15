@@ -43,7 +43,9 @@ azd env set TO_EMAIL you@example.com   # optional: email products that need atte
 azd up
 ```
 
-If you set `TO_EMAIL`, authorize the Office 365 connection once: open the Connector Namespace (`cg-...`) in the Azure portal, select the `office365` connection, and sign in. Without `TO_EMAIL`, results are only logged.
+If you set `TO_EMAIL`, authorize the Office 365 connection once: open the Connector Namespace (`cg-...`) in the Azure portal, select the `office365` connection, and sign in. Without `TO_EMAIL`, no email is sent.
+
+By default, the hosted-skills runtime does not include the full model response in traces. To inspect sample JSON in Application Insights, add `ENABLE_SENSITIVE_DATA=true` to the Function App's application settings and restart the app. This exposes full model responses in logs; use it only with sample or otherwise non-sensitive data, since responses may contain personal data and are subject to your log access and retention settings.
 
 ## Try it
 
@@ -63,9 +65,9 @@ After `update`, the skill should flag both products:
  {"id": "TENT-4P", "name": "4-person tent", "change": "price: 289.0 → 219.0", "attention": ["price_change_over_20_percent"]}]
 ```
 
-The change feed can batch both updates into one run or deliver them in two. Find the result in Application Insights (`traces` for the `product_watch` operation), or in your inbox when `TO_EMAIL` is set. You can also edit items with Data Explorer in the Azure portal.
+The change feed can batch both updates into one run or deliver them in two. Find invocation details in Application Insights (`traces` for the `product_watch` operation), or the result in your inbox when `TO_EMAIL` is set. You can also edit items with Data Explorer in the Azure portal.
 
-`python scripts/demo.py e2e` adds uniquely named products and waits until Application Insights shows a successful run.
+`python scripts/demo.py e2e` adds uniquely named products and runs a best-effort smoke check for a successful invocation in Application Insights. It does not correlate invocations with the submitted products, so it is not proof that they were processed; unrelated runs or telemetry delays can affect the result.
 
 ## Run locally
 
