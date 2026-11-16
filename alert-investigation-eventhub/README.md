@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Alert investigation"
+description: Route Event Hubs alerts with fixed rules and Microsoft-Decision-1, and investigate selected incidents with a hosted skill.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-alert-investigation-eventhub-python
+---
+-->
+
 # Alert investigation (Event Hubs + Microsoft-Decision-1 + queue-triggered hosted skill)
 
 Security and operations alerts stream into Event Hubs, sometimes thousands per minute. A code function filters them with deterministic rules, then routes what's left with [Microsoft-Decision-1](https://ai.azure.com/catalog/models/Microsoft-Decision-1). Only the alerts worth a closer look reach a hosted skill on Azure Functions, which gathers evidence and writes an investigation report: a **verdict**, the **evidence**, and the **recommended containment**. Containment is never executed automatically.

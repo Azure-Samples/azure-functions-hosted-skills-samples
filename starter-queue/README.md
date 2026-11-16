@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Queue starter"
+description: Triage support messages from an Azure Storage queue with a hosted skill.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-starter-queue-python
+---
+-->
+
 # Starter: queue-triggered hosted skill
 
 The smallest useful hosted skill that reacts to an **Azure Storage queue**. Drop a support message on the `support-requests` queue and the skill triages it — category, urgency, sentiment, a one-line summary, and a suggested first reply. There are no custom tools: the whole skill is one Markdown file.

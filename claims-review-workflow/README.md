@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Insurance claims review"
+description: Start a dynamic workflow from a blob-triggered hosted skill to run parallel insurance claim checks and record a decision.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-claims-review-workflow-python
+---
+-->
+
 # Insurance claims review (Dynamic Workflows)
 
 An insurance claim package — a JSON claim form plus its supporting documents — is uploaded to Blob Storage. A hosted skill on Azure Functions reads the claim and starts a **Dynamic Workflow**: coverage, required documents, and claim history are checked in parallel as durable workflow steps, then a final step records a decision — **approve**, **request_info**, or **refer_to_adjuster** — with every reason.

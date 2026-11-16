@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Customer returns review"
+description: Triage customer return requests from a queue using a hosted skill that records a recommendation and supporting evidence.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-customer-returns-queue-python
+---
+-->
+
 # Customer returns triage (queue-triggered hosted skill)
 
 A return request lands on a queue. A hosted skill on Azure Functions reads it, looks up the order, the return policy, and the customer's support history, then records a recommendation — **approve**, **approve as an exception**, **decline**, or **escalate** — with its reasons, evidence, and a reply draft for a support agent to send.

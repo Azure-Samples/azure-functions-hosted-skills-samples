@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Blob Storage starter"
+description: Summarize text documents uploaded to Azure Blob Storage with an Azure Functions hosted skill.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-starter-blob-python
+---
+-->
+
 # Starter: Blob-triggered hosted skill
 
 The smallest useful hosted skill that reacts to **files uploaded to Azure Blob Storage**. Upload a text document (notes, a report, a CSV export) to the `documents` container and the skill summarizes it: a short summary, key points, and action items. There are no custom tools: the skill is one Markdown file plus a few lines of code that read the file.

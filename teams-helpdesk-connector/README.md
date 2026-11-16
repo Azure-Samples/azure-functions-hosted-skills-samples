@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Teams IT helpdesk"
+description: Answer Teams IT helpdesk questions with a connector-triggered hosted skill and send replies to the message thread.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-teams-helpdesk-connector-python
+---
+-->
+
 # IT helpdesk in Microsoft Teams (connector-triggered hosted skill)
 
 Employees post IT questions in a Teams channel. A hosted skill on Azure Functions picks up each new message through the Microsoft Teams connector, answers from the IT knowledge base, resolves common requests with tools — password reset guidance and software request tickets — and replies in the message thread. When it isn't sure, it hands the question to the human IT service desk.
