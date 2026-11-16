@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Contract review"
+description: Call a hosted skill from a Durable Functions workflow to compare contract clauses against a playbook before approval.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-contract-review-durable-python
+---
+-->
+
 # Contract review (Durable Functions + hosted skill)
 
 A vendor contract is submitted to an HTTP API. A Durable Functions orchestration runs the review process in code: it validates the contract, asks a hosted skill to compare it with Contoso's clause playbook, and then routes it. Low-risk contracts are **auto-approved**. Anything else gets a **legal review task**, and the orchestration waits for a lawyer's decision, escalating if nobody decides within 24 hours. Every outcome is written as an auditable decision record.

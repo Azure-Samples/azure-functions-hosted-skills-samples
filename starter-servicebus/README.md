@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Service Bus starter"
+description: Review orders from an Azure Service Bus queue with a hosted skill that recommends whether to fulfill or hold each order.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-starter-servicebus-python
+---
+-->
+
 # Starter: Service Bus-triggered hosted skill
 
 The smallest useful hosted skill that reacts to an **Azure Service Bus queue**. Put an order on the `orders` queue and the skill reviews it — totals the items, flags risk signals (high value, large quantities, overnight shipping to a different address, a note asking to skip checks), and recommends `fulfill` or `hold_for_review`. It only recommends. There are no custom tools: the whole skill is one Markdown file.

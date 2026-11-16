@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Record repair"
+description: Use a hosted skill to repair formatting errors in Service Bus dead-lettered records and requeue validated results.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-record-repair-servicebus-python
+---
+-->
+
 # Record repair on a Service Bus dead-letter queue (hosted skill added to an existing pipeline)
 
 An ingestion pipeline already exists: a plain Azure Function, `ingest`, reads JSON records from a Service Bus queue, validates them against a schema, and writes them to Blob Storage. Records that don't match the schema fail and, after a few attempts, land in the queue's **dead-letter queue**, where they usually wait for a person.

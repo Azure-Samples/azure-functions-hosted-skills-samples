@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Invoice review"
+description: Review uploaded invoices against purchase orders, receipts, and contracts with a blob-triggered hosted skill.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-invoice-review-blob-python
+---
+-->
+
 # Invoice review (blob-triggered hosted skill)
 
 A supplier invoice PDF is uploaded to Blob Storage. A hosted skill on Azure Functions reads it, matches it against the purchase order, goods receipt, and vendor contract, then records a review — **approve for payment**, **hold for review**, or **reject** — with every discrepancy, the amount in dispute, and a message draft for the vendor.

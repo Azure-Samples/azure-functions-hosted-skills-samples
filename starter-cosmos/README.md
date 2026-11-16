@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Azure Cosmos DB starter"
+description: Use an Azure Cosmos DB change feed to summarize product changes and flag low stock or price changes with a hosted skill.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-starter-cosmos-python
+---
+-->
+
 # Starter: Cosmos DB-triggered hosted skill
 
 The smallest useful hosted skill that reacts to **Azure Cosmos DB changes**. Add or update a product in the `products` container and the skill reads the change feed, summarizes what changed, and flags products that need attention: low stock, out of stock, or a price change over 20 percent. There are no custom tools: the whole skill is one Markdown file.

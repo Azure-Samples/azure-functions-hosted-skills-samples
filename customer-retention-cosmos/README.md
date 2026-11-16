@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Customer retention"
+description: Use an Azure Cosmos DB change feed and a hosted skill to draft retention actions when customer usage changes.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-customer-retention-cosmos-python
+---
+-->
+
 # Customer retention (Cosmos DB change feed hosted skill)
 
 Customer account documents, including usage numbers, live in Azure Cosmos DB. When an account changes, the change feed triggers a hosted skill on Azure Functions. The skill checks the account for churn signals: usage drop, upcoming renewal, open support issues, and unused seats. For accounts that need attention, it drafts a retention action for the customer success manager (CSM): a personalized outreach email and, when it fits, an offer within the tier's policy limits. The draft goes to a separate `retention-actions` container. Offers above the approval threshold are marked `needs_approval`.

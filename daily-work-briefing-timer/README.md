@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Daily work briefing"
+description: Run a timer-triggered hosted skill to create a prioritized daily briefing from calendar, message, and task data.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-daily-work-briefing-timer-python
+---
+-->
+
 # Daily work briefing (timer-triggered hosted skill)
 
 Every weekday morning, a hosted skill on Azure Functions reads today's calendar, unread email, and open tasks, then publishes a short briefing: the **top three priorities** with the reason for each, the day's meetings with **suggested prep**, messages to answer, follow-ups, and things to watch out for, such as overlapping meetings or a phishing email.

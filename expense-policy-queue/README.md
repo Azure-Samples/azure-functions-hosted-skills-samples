@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Expense policy routing"
+description: Use a queue-triggered hosted skill to route expense requests based on policy documents in Azure Blob Storage.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-expense-policy-queue-python
+---
+-->
+
 # Expense policy routing (queue-triggered hosted skill)
 
 Expense and purchase requests land on a Storage queue in any format: a sentence, an email, `key: value` lines, or JSON. A hosted skill on Azure Functions reads each request, finds the policy document for its category in Blob Storage, applies the policy's rules, and routes the decision to one of three queues: **approved**, **review**, or **flagged**.
