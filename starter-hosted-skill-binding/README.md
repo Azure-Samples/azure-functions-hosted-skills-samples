@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Hosted Skill binding starter"
+description: Triage support messages from an Azure Storage queue with a Python function that explicitly invokes a Markdown-defined hosted skill.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-starter-hosted-skill-binding-python
+---
+-->
+
 # Starter: Hosted Skill binding in a queue-triggered function
 
 Add an AI step to an ordinary **Azure Storage queue-triggered function**. Python

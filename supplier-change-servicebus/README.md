@@ -1,3 +1,19 @@
+<!--
+---
+name: "Azure Functions hosted skills: Supplier change assessment"
+description: Assess supplier delivery changes from Azure Service Bus with a hosted skill, code-enforced purchasing policy, and buyer-review notifications.
+page_type: sample
+languages:
+- python
+- bicep
+- azdeveloper
+products:
+- azure
+- azure-functions
+urlFragment: ai-hosted-skills-supplier-change-servicebus-python
+---
+-->
+
 # Supplier change assessment (Service Bus + Hosted Skill binding)
 
 A supplier reports a changed delivery date, partial shipment, or proposed substitute. Application code validates the message, loads purchasing evidence, and decides whether a model is needed. A routine structured schedule confirmation stays in code; an ambiguous exception calls a Markdown-defined Hosted Skill. Code enforces purchasing policy, stores a recommendation, and sends a reference-only buyer-review notification when approval is required.
