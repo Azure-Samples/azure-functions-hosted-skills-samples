@@ -1,0 +1,6 @@
+{
+  "change_id": "SC-1001", "supplier_id": "SUP-100", "po_id": "PO-4101",
+  "change_kind": "schedule_update", "proposed_delivery_date": "2026-11-21",
+  "quantity_available": 100, "substitute_sku": null,
+  "explanation": "Carrier collection moved by one day. The full order is confirmed for November 21; no product or quantity changes."
+}

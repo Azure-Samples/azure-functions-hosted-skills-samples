@@ -18,16 +18,18 @@ Pick a scenario, deploy it, send the sample events, and read what the skill deci
 | [`teams-helpdesk-connector`](teams-helpdesk-connector) | Answer helpdesk questions posted in a Teams channel | Connector (Teams) + HTTP test | ✅ Available |
 | [`record-repair-servicebus`](record-repair-servicebus) | Add AI to an existing ingestion pipeline: repair malformed records from the dead-letter queue and requeue them through the original function | Service Bus dead-letter queue | ✅ Available |
 | [`expense-policy-queue`](expense-policy-queue) | Route free-form expense requests by the policy documents stored in Blob; edit one policy and only that category reroutes. Optional API Management AI Gateway (token limits, prompt shields, token metrics) | Storage queue | ✅ Available |
+| [`supplier-change-servicebus`](supplier-change-servicebus) | Review supplier delivery changes: handle routine updates in code, invoke a bound skill for exceptions, and enforce purchasing policy before recording recommendations and notifying buyers | Service Bus + Hosted Skill binding | ✅ Available |
 
-The last two templates are simplified versions of the Hosted Skills team's demos [hosted-skills-delivery-recovery](https://github.com/greenie-msft/hosted-skills-delivery-recovery) and [hosted-skills-expense-processor](https://github.com/Azure-Samples/hosted-skills-expense-processor).
+The record repair and expense policy templates are simplified versions of the Hosted Skills team's demos [hosted-skills-delivery-recovery](https://github.com/greenie-msft/hosted-skills-delivery-recovery) and [hosted-skills-expense-processor](https://github.com/Azure-Samples/hosted-skills-expense-processor).
 
 ## Starters
 
-Minimal templates for starting your own hosted skill from a trigger. Each one deploys the trigger's data source, Microsoft Foundry, an Azure Container Apps dynamic session pool (code interpreter), and an optional Office 365 Outlook connector (when `TO_EMAIL` is set). The skill is a single Markdown file with no custom tools, and its sample just logs (and optionally emails) a result. They follow the shape of the [daily blog timer starter](https://github.com/Azure-Samples/functions-daily-blog-hosted-skills-azd).
+Minimal templates for starting your own hosted skill from a trigger. Each one deploys the trigger's data source and Microsoft Foundry. The trigger-first starters also deploy an Azure Container Apps dynamic session pool (code interpreter) and an optional Office 365 Outlook connector (when `TO_EMAIL` is set); the binding starter keeps only the resources its triage step needs. The skill is a single Markdown file with no custom tools, and its sample logs (and, where configured, emails) a result. They follow the shape of the [daily blog timer starter](https://github.com/Azure-Samples/functions-daily-blog-hosted-skills-azd).
 
 | Template | Sample skill | Trigger | Data source deployed |
 |---|---|---|---|
 | [`starter-queue`](starter-queue) | Triage a support message: category, urgency, sentiment, suggested reply | Storage queue | Storage queue `support-requests` |
+| [`starter-hosted-skill-binding`](starter-hosted-skill-binding) | Add AI to a Python function: validate a support message, explicitly invoke a Markdown skill, and handle its structured result | Storage queue (Python-owned trigger + Hosted Skill binding) | Storage queue `support-requests` |
 | [`starter-servicebus`](starter-servicebus) | Review an order and recommend fulfill or hold | Service Bus queue | Service Bus namespace + queue `orders` |
 | [`starter-blob`](starter-blob) | Summarize an uploaded text document: summary, key points, action items | Blob (Event Grid) | Blob container `documents` + Event Grid system topic |
 | [`starter-cosmos`](starter-cosmos) | Summarize product catalog changes and flag low stock or big price changes | Cosmos DB change feed | Cosmos DB (serverless) `starter/products` + `leases` |
@@ -44,14 +46,14 @@ Each template's README has the demo steps, local run instructions, and a "Make i
 
 ## What every template includes
 
-- `src/*.agent.md` — the hosted skill: trigger, instructions, and tool access in one Markdown file.
+- `src/*.agent.md` — the hosted skill: instructions, tool access, and (for runtime-owned triggers) trigger configuration. Binding-based samples declare the trigger in Python instead.
 - `src/tools/` — Python tools the skill calls. Side effects are idempotent and approval rules are enforced in code.
 - `src/data/` and `samples/` — mock business data and sample events that show interesting decisions.
 - `infra/` — Bicep for a Flex Consumption app, managed identity everywhere (no keys), Microsoft Foundry model, and monitoring.
 - `scripts/demo.py` — send or upload the samples and print the results.
 - `tests/` — unit tests for the tools.
 
-The starters keep only `src/*.agent.md`, `infra/`, `samples/`, and `scripts/demo.py`.
+The starters keep application code and configuration, a single Markdown skill, infrastructure, sample events, and a demo script. The binding starter also includes focused handler and demo tests.
 
 ## Test
 

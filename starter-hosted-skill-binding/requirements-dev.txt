@@ -1,0 +1,5 @@
+-r src/requirements.txt
+azure-identity
+azure-storage-queue
+azure-monitor-query
+pytest

@@ -1,0 +1,32 @@
+{
+  "policy": {
+    "version": "2026-11-demo",
+    "rules": [
+      "A missing date, quantity mismatch, inventory coverage gap, or late required date needs buyer review.",
+      "Substitutes not explicitly on the purchase order's approved list always need human approval.",
+      "Record recommendations only. Never change purchase orders or contact suppliers automatically."
+    ]
+  },
+  "purchase_orders": {
+    "PO-4101": {
+      "po_id": "PO-4101", "supplier_id": "SUP-100", "sku": "BEARING-A",
+      "outstanding_quantity": 100, "promised_delivery_date": "2026-11-20",
+      "required_by": "2026-11-25", "approved_substitutions": ["BEARING-A2"]
+    },
+    "PO-4102": {
+      "po_id": "PO-4102", "supplier_id": "SUP-200", "sku": "SEAL-B",
+      "outstanding_quantity": 200, "promised_delivery_date": "2026-11-20",
+      "required_by": "2026-11-24", "approved_substitutions": []
+    },
+    "PO-4103": {
+      "po_id": "PO-4103", "supplier_id": "SUP-300", "sku": "VALVE-C",
+      "outstanding_quantity": 50, "promised_delivery_date": "2026-11-21",
+      "required_by": "2026-11-26", "approved_substitutions": ["VALVE-C2"]
+    }
+  },
+  "inventory": {
+    "BEARING-A": {"coverage_until": "2026-11-24", "on_hand_units": 120},
+    "SEAL-B": {"coverage_until": "2026-11-22", "on_hand_units": 30},
+    "VALVE-C": {"coverage_until": "2026-11-25", "on_hand_units": 70}
+  }
+}
