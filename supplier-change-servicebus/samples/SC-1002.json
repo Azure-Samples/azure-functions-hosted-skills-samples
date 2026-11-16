@@ -1,0 +1,6 @@
+{
+  "change_id": "SC-1002", "supplier_id": "SUP-200", "po_id": "PO-4102",
+  "change_kind": "exception", "proposed_delivery_date": null,
+  "quantity_available": 80, "substitute_sku": null,
+  "explanation": "We can send 80 seals now. The rest should follow early next week, subject to the next production run clearing inspection. We cannot confirm a date yet. Can you work with that?"
+}

@@ -1,0 +1,6 @@
+{
+  "change_id": "SC-1003", "supplier_id": "SUP-300", "po_id": "PO-4103",
+  "change_kind": "exception", "proposed_delivery_date": "2026-11-22",
+  "quantity_available": 50, "substitute_sku": "VALVE-X",
+  "explanation": "Our usual valve is unavailable. We can deliver VALVE-X instead on November 22. It has the same nominal size and should be equivalent, but we have not supplied its pressure certification or seal-material specification. Please accept it as a direct replacement."
+}

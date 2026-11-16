@@ -1,0 +1,3 @@
+# The application owns the workflow. The skill is an endpoint-less judgment step.
+model: $FOUNDRY_MODEL
+timeout: 1800
