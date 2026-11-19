@@ -168,7 +168,7 @@ def is_critical(group: list[dict[str, Any]]) -> bool:
 
 
 def build_state(group: list[dict[str, Any]], assets: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Code-enriched state for Microsoft-Decision-1: the alerts plus asset context."""
+    """Code-enriched state for the decision model: the alerts plus asset context."""
     return {
         "alert_count": len(group),
         "max_severity": max_severity(group),

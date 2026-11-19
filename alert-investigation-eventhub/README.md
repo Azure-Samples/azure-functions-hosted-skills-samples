@@ -1,7 +1,7 @@
 <!--
 ---
 name: "Azure Functions hosted skills: Alert investigation"
-description: Route Event Hubs alerts with fixed rules and Microsoft-Decision-1, and investigate selected incidents with a hosted skill.
+description: Route Event Hubs alerts with fixed rules and Microsoft-Decision-1.1, and investigate selected incidents with a hosted skill.
 page_type: sample
 languages:
 - python
@@ -14,15 +14,15 @@ urlFragment: ai-hosted-skills-alert-investigation-eventhub-python
 ---
 -->
 
-# Alert investigation (Event Hubs + Microsoft-Decision-1 + queue-triggered hosted skill)
+# Alert investigation (Event Hubs + Microsoft-Decision-1.1 + queue-triggered hosted skill)
 
-Security and operations alerts stream into Event Hubs, sometimes thousands per minute. A code function filters them with deterministic rules, then routes what's left with [Microsoft-Decision-1](https://ai.azure.com/catalog/models/Microsoft-Decision-1). Only the alerts worth a closer look reach a hosted skill on Azure Functions, which gathers evidence and writes an investigation report: a **verdict**, the **evidence**, and the **recommended containment**. Containment is never executed automatically.
+Security and operations alerts stream into Event Hubs, sometimes thousands per minute. A code function filters them with deterministic rules, then routes what's left with [Microsoft-Decision-1.1](https://learn.microsoft.com/azure/foundry/foundry-models/how-to/use-foundry-models-microsoft-decision). Only the alerts worth a closer look reach a hosted skill on Azure Functions, which gathers evidence and writes an investigation report: a **verdict**, the **evidence**, and the **recommended containment**. Containment is never executed automatically.
 
 This is the [security/operations alert investigation scenario](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#investigate-selected-events) at high volume as a runnable template. Run `azd up`, send the sample burst of alerts, and read the routing decisions and reports.
 
-![Diagram of Event Hubs alerts passing through a function that uses fixed rules and Microsoft-Decision-1, followed by an incident queue and a hosted skill that uses a generative model to investigate selected incidents.](media/architecture.png)
+![Diagram of Event Hubs alerts passing through a function that uses fixed rules and Microsoft-Decision-1.1, followed by an incident queue and a hosted skill that uses a generative model to investigate selected incidents.](media/architecture.png)
 
-*Scenario overview from [Investigate selected events](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#investigate-selected-events) on Microsoft Learn. The diagram below shows how this template implements it.*
+*Scenario overview adapted from [Investigate selected events](https://learn.microsoft.com/azure/azure-functions/functions-hosted-skills-scenarios#investigate-selected-events) on Microsoft Learn. The diagram below shows how this template implements it.*
 
 ```text
  alerts ──► Event Hubs: alerts ──► alert_router (code, function_app.py)
@@ -31,7 +31,7 @@ This is the [security/operations alert investigation scenario](https://learn.mic
                                      │ 3. dedupe            same fingerprint in the window ──► Table: alertfingerprints (count)
                                      │ 4. group by host/user
                                      │ 5. critical?         yes ──────────────► Queue: alerts-investigate
-                                     │ 6. Microsoft-Decision-1 "route" choice question
+                                     │ 6. Microsoft-Decision-1.1 "route" choice question
                                      │      investigate ────────────────────────► Queue: alerts-investigate
                                      │      aggregate / routine ────────────────► Table: alertdecisions (the summary)
                                      │      uncertain, low confidence, or error ► Queue: alerts-review
@@ -48,7 +48,7 @@ This is the [security/operations alert investigation scenario](https://learn.mic
                                 └─ record_investigation      (idempotent; approval enforced in code)
 ```
 
-Every routing outcome, including suppressed alerts and Decision-1 errors, is written to the `alertdecisions` table with its source, choice, and per-option probabilities. Nothing is silently dropped.
+Every routing outcome, including suppressed alerts and decision-model errors, is written to the `alertdecisions` table with its source, choice, and per-option probabilities. Nothing is silently dropped.
 
 A Storage Queue message can be at most 64 KiB, but one Event Hubs event can be up to 1 MB. When a queue message for an alert group would be larger than 48 KiB, the router writes the full group to `alert-payloads/{queue}/{group_id}.json` in Blob Storage and queues a small pointer (`group_id`, `route`, `alert_count`, `payload_blob`) instead. The skill loads the group with `get_alert_payload`. See [Large alerts](#large-alerts).
 
@@ -57,25 +57,25 @@ A Storage Queue message can be at most 64 KiB, but one Event Hubs event can be u
 Most alerts in a busy SOC are noise: the same disk-space warning five times, an authorized vulnerability scan, a password-expiry reminder. Sending all of them to a language model is slow and expensive, and an analyst still has to read every result. This template splits the work by cost:
 
 - **Code** handles the rules you can write down: suppress known-benign alerts, drop duplicates, group related alerts, and send critical alerts straight to investigation. It costs almost nothing per event and keeps up with Event Hubs volume.
-- **Microsoft-Decision-1** answers one structured question per remaining alert group: *investigate, aggregate, routine, or uncertain?* It returns a choice plus a probability for each option, so the code can fail safe on low confidence. It's a fast, inexpensive call. No prompt engineering or output parsing is needed.
+- **Microsoft-Decision-1.1** answers one structured question per remaining alert group: *investigate, aggregate, routine, or uncertain?* It returns a choice plus a probability for each option, so the code can fail safe on low confidence. It's a fast, inexpensive call. No prompt engineering or output parsing is needed.
 - **The hosted skill** does the expensive part, an evidence-gathering investigation with a reasoning model, only for the few alerts that deserve one.
 
-The sample burst shows the range:
+The sample burst shows the range. Model-driven routes are examples; actual choices and probabilities can differ:
 
 | Alert | Situation | What happens |
 |---|---|---|
-| `ALR-1001` | **Critical** EDR ransomware behavior on `fin-ws-22` | Critical bypass. Skips Decision-1 and goes straight to investigation. |
-| `ALR-1002` | Medium: impossible travel, then a privileged role assignment | Decision-1 → `investigate`, then a report is written |
+| `ALR-1001` | **Critical** EDR ransomware behavior on `fin-ws-22` | Critical bypass. Skips Decision-1.1 and goes straight to investigation. |
+| `ALR-1002` | Medium: impossible travel, then a privileged role assignment | Decision-1.1 → `investigate`, then a report is written |
 | `ALR-1003`–`ALR-1007` | Five identical low disk-space warnings | `ALR-1003` is routed; `1004`–`1007` are deduplicated (duplicate count 4) |
-| `ALR-1008` | Informational password-expiry reminder | Decision-1 → `routine` (summary only) |
+| `ALR-1008` | Informational password-expiry reminder | Decision-1.1 → `routine` (summary only) |
 | `ALR-1009` | Port scan from the authorized scanner `scan-01` | Suppressed by rule `SUP-001` |
-| `ALR-1010` | Phishing email already quarantined | Decision-1 → `aggregate` (summary only) |
+| `ALR-1010` | Phishing email already quarantined | Decision-1.1 → `aggregate` (summary only) |
 
 All of the data the skill investigates (sign-ins, endpoint events, network flows, assets, and threat intel) is mock JSON in `src/data`. Replace the tools with calls to your SIEM, EDR, and identity provider; see [Make it yours](#make-it-yours).
 
 ## Prerequisites
 
-- An Azure subscription where you can deploy a Microsoft Foundry model and `Microsoft-Decision-1` (the template deploys both).
+- An Azure subscription where you can deploy a Microsoft Foundry model and `Microsoft-Decision-1.1` (the template deploys both).
 - [Azure Developer CLI](https://aka.ms/azd) (`azd`) 1.10 or later, and [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) (`az`).
 - Python 3.13.
 - For local runs: [Azure Functions Core Tools](https://learn.microsoft.com/azure/azure-functions/functions-run-local) 4.x and [Azurite](https://learn.microsoft.com/azure/storage/common/storage-use-azurite).
@@ -90,7 +90,7 @@ az login
 azd up
 ```
 
-Pick a region where Microsoft-Decision-1 is available with Global Standard: `eastus2` (default), `eastus`, `centralus`, `northcentralus`, `southcentralus`, `westus`, `westus3`, `canadacentral`, `canadaeast`, or `brazilsouth`.
+Pick a region where Microsoft-Decision-1.1 is available with Global Standard: `eastus2`, `eastus`, `centralus`, `northcentralus`, `southcentralus`, `westus`, `westus3`, `canadacentral`, `canadaeast`, or `brazilsouth`. Availability and quota can vary by subscription.
 
 `azd up` creates a resource group with:
 
@@ -100,17 +100,24 @@ Pick a region where Microsoft-Decision-1 is available with Global Standard: `eas
   - the `alerts-investigate` and `alerts-review` queues
   - the `investigations` container, and the `alert-payloads` container for alert groups too large for a queue message
   - the `alertdecisions` and `alertfingerprints` tables
-- A Microsoft Foundry account and project with two deployments: `gpt-5.4` for the skill, and `decision-1`, which runs the `Microsoft-Decision-1` model, for routing.
+- A Microsoft Foundry account and project with two deployments: `gpt-5.4` for the skill, and `decision-1.1`, which runs the `Microsoft-Decision-1.1` model, for routing.
 - Application Insights and Log Analytics.
 
 All connections use the managed identity. The app gets Event Hubs Data Receiver, Cognitive Services User, and storage data roles. Your signed-in account gets Event Hubs Data Sender and Receiver, Cognitive Services User, and storage data roles, so you can run the demo and the app locally.
 
-### Microsoft-Decision-1 notes
+### Microsoft-Decision-1.1 notes
 
-- The deployment is named `decision-1` because Azure rejects deployment names that contain the reserved word "Microsoft". The model it runs is still `Microsoft-Decision-1`, version `1`.
+- The deployment is named `decision-1.1` because Azure rejects deployment names that contain the reserved word "Microsoft". The model it runs is `Microsoft-Decision-1.1`, version `1`.
 - The router calls `POST {account endpoint}/providers/microsoft/v1/systemone` with an Entra ID token (scope `https://cognitiveservices.azure.com/.default`). The client is in `src/alert_router/decision.py`.
-- Each capacity unit allows **1 request and 1,000 tokens per minute**. With capacity 1, even the 10-alert sample burst is throttled. The template deploys **capacity 50** by default. Usage is billed per call, not per unit. To change it, run `azd env set DECISION_CAPACITY <n>` and then `azd provision`. A capacity change can take a few minutes to reach the data plane.
+- The template allocates **capacity 50** by default. Capacity sets rate limits and uses quota; inference is billed by input tokens rather than by capacity. To change it, run `azd env set DECISION_CAPACITY <n>` and then `azd provision`. A capacity change can take a few minutes to reach the data plane.
 - On HTTP 429, the client honors `retry-after-ms`/`retry-after` (capped at 30 seconds) for up to 6 attempts. If it still fails, the alert group goes to `alerts-review` with source `decision1_error`.
+- Model changes can affect routing choices and confidence scores. Validate `DECISION_MIN_CONFIDENCE` against representative labeled alerts before using it in production.
+
+### Upgrading from Microsoft-Decision-1
+
+For an existing environment, run `azd up` to create the `decision-1.1` deployment and update the function app's `DECISION_DEPLOYMENT` setting. The old `decision-1` deployment remains in the Foundry account and continues to reserve its quota; delete it manually only after confirming that no other clients need it. For local runs, update `DECISION_DEPLOYMENT` in `src/local.settings.json` from `azd env get-values`.
+
+The persisted `source` values `decision1`, `decision1_low_confidence`, and `decision1_error` are retained for compatibility with existing records and consumers; they do not identify the model version.
 
 ## Try it
 
@@ -128,21 +135,21 @@ python scripts/demo.py results    # print today's routing decisions and investig
 - the critical alert was investigated
 - the duplicates were deduplicated
 - the routine alerts were summarized
-- Decision-1 routed the rest
+- Decision-1.1 routed the rest
 - an extra critical alert, `ALR-1011`, with about 140 KB of evidence was offloaded to Blob Storage, and the skill loaded it and wrote a report that names what's only in the payload (`rclone`)
 
-Example output (from a real run):
+Example output from a Decision-1.1 run (model output varies between runs):
 
 ```text
 Routing decisions:
   ALR-1001: investigate source=critical_bypass          alerts=1 [-]
-  ALR-1002: investigate source=decision1                alerts=1 [investigate=1.00, uncertain=0.00, aggregate=0.00, routine=0.00]
-  ALR-1003: routine     source=decision1                alerts=1 [routine=1.00, aggregate=0.00, uncertain=0.00, investigate=0.00]
+  ALR-1002: investigate source=decision1                alerts=1 [investigate=1.00, routine=0.00, uncertain=0.00, aggregate=0.00]
+  ALR-1003: routine     source=decision1                alerts=1 [routine=1.00, uncertain=0.00, investigate=0.00, aggregate=0.00]
   ALR-1004: (no record - deduplicated or not processed yet)
   ...
-  ALR-1008: routine     source=decision1                alerts=1 [routine=1.00, aggregate=0.00, uncertain=0.00, investigate=0.00]
+  ALR-1008: routine     source=decision1                alerts=1 [routine=1.00, uncertain=0.00, investigate=0.00, aggregate=0.00]
   ALR-1009: suppressed  source=suppression_rule         alerts=1 [-]
-  ALR-1010: aggregate   source=decision1                alerts=1 [aggregate=1.00, investigate=0.00, uncertain=0.00, routine=0.00]
+  ALR-1010: aggregate   source=decision1                alerts=1 [aggregate=1.00, uncertain=0.00, investigate=0.00, routine=0.00]
 
 Duplicate count on ALR-1003: 4
 
@@ -189,6 +196,7 @@ There's no Event Hubs emulator in this template. Locally, the app reads from the
    |---|---|
    | `FOUNDRY_PROJECT_ENDPOINT` | `FOUNDRY_PROJECT_ENDPOINT` |
    | `DECISION_ENDPOINT` | `DECISION_ENDPOINT` |
+   | `DECISION_DEPLOYMENT` | `DECISION_DEPLOYMENT` |
    | `EVENTHUB__fullyQualifiedNamespace` | `EVENTHUB_FULLY_QUALIFIED_NAMESPACE` |
 
    Then set `AzureWebJobs.alert_router.Disabled` to `false`. Leave `EVENTHUB_CONSUMER_GROUP` as `local-dev`.
@@ -200,16 +208,16 @@ There's no Event Hubs emulator in this template. Locally, the app reads from the
    python scripts/demo.py results --local
    ```
 
-Locally, the app uses your `az login` identity for Event Hubs, Microsoft-Decision-1, and Foundry. `azd up` already granted that identity the roles it needs.
+Locally, the app uses your `az login` identity for Event Hubs, Microsoft-Decision-1.1, and Foundry. `azd up` already granted that identity the roles it needs.
 
 ## Make it yours
 
 | To change | Edit |
 |---|---|
 | Known-benign suppressions | `src/data/suppressions.json` (match on `rule_id` plus `host`, `user`, or `asset_tag`) |
-| Dedupe window and Decision-1 confidence threshold | `DEDUPE_WINDOW_MINUTES` and `DECISION_MIN_CONFIDENCE` app settings (`infra/main.bicep`) |
+| Dedupe window and Decision-1.1 confidence threshold | `DEDUPE_WINDOW_MINUTES` and `DECISION_MIN_CONFIDENCE` app settings (`infra/main.bicep`) |
 | What counts as a duplicate, and how alerts are grouped | `fingerprint` and `group_alerts` in `src/alert_router/rules.py` |
-| Routing options and their criteria for Decision-1 | `ROUTE_OPTIONS` and `INSTRUCTIONS` in `src/alert_router/router.py` |
+| Routing options and their criteria for Decision-1.1 | `ROUTE_OPTIONS` and `INSTRUCTIONS` in `src/alert_router/router.py` |
 | Investigation steps, verdict rules, and report tone | `src/alert_investigator.agent.md` |
 | Evidence sources (SIEM, EDR, IdP, CMDB, threat intel) | `src/tools/get_*.py` and `lookup_threat_intel.py`. Replace the `src/data/*.json` reads with your APIs. |
 | Queue message size budget | `MAX_QUEUE_MESSAGE_BYTES` in `src/alert_router/router.py` |
@@ -220,7 +228,7 @@ Locally, the app uses your `az login` identity for Event Hubs, Microsoft-Decisio
 ## Guardrails built in
 
 - **Recommend, don't act.** `execute_containment_action` always refuses. `record_investigation` stores every containment action with `executed: false` and `status: pending_approval`. It also sets `requires_human_approval` whenever containment is recommended or the verdict is `malicious` or `suspicious`, regardless of what the model says. Isolating a host or disabling an account stays with an analyst and your SOAR approval flow.
-- **Fail safe, never silent.** Invalid events, `uncertain` answers, low-confidence answers (below `DECISION_MIN_CONFIDENCE`), and Decision-1 errors all go to the `alerts-review` queue. Each one is recorded with the reason.
+- **Fail safe, never silent.** Invalid events, `uncertain` answers, low-confidence answers (below `DECISION_MIN_CONFIDENCE`), and decision-model errors all go to the `alerts-review` queue. Each one is recorded with the reason.
 - **Critical alerts bypass the model.** Critical alerts go straight to investigation and are never suppressed.
 - **Escalations aren't deduplicated.** Severity is part of the fingerprint, so a low alert followed by a critical one on the same host is treated as new.
 - **Alert content is data, not instructions.** The skill is told to treat alert descriptions and log content as evidence to report, never as instructions to follow.
@@ -251,7 +259,7 @@ python scripts/test.py --template alert-investigation-eventhub --level deploy --
 The unit tests in `tests/` cover:
 
 - the rules
-- the Decision-1 client, with mocked HTTP, including 429 retries
+- the Decision-1.1 client, with mocked HTTP, including 429 retries
 - the routing pipeline and fail-safe paths
 - queue message size: a single huge event and a batch of large events always produce messages under the limit, and the full data can be read back from Blob Storage
 - the storage idempotency
@@ -260,10 +268,10 @@ The unit tests in `tests/` cover:
 
 ## Troubleshooting
 
-- **Routing decisions show `decision1_error` with `HTTP 429 RateLimitReached`.** The `decision-1` deployment ran out of requests per minute. Raise the capacity with `azd env set DECISION_CAPACITY <n>` and then `azd provision`. Allow a few minutes after a capacity change. The affected alerts are in `alerts-review`.
-- **`azd up` fails with `ContainsReservedWord`.** A deployment name contains "Microsoft". Keep `decisionDeploymentName` as `decision-1` (or any name without the reserved word).
+- **Routing decisions show `decision1_error` with `HTTP 429 RateLimitReached`.** The `decision-1.1` deployment ran out of rate-limit capacity. Raise the capacity with `azd env set DECISION_CAPACITY <n>` and then `azd provision`. Allow a few minutes after a capacity change. The affected alerts are in `alerts-review`.
+- **`azd up` fails with `ContainsReservedWord`.** A deployment name contains "Microsoft". Keep `decisionDeploymentName` as `decision-1.1` (or any name without the reserved word).
 - **`azd up` fails while uploading the package with `403 ... not authorized to perform this operation`.** The app's role assignments were just created and haven't reached Storage yet. Wait a minute and run `azd deploy`.
-- **`demo.py send` fails with `Unauthorized`, or the router logs `403` from Event Hubs or Decision-1.** Role assignments can take a few minutes to propagate after `azd up`. Try again.
+- **`demo.py send` fails with `Unauthorized`, or the router logs `403` from Event Hubs or Decision-1.1.** Role assignments can take a few minutes to propagate after `azd up`. Try again.
 - **No routing decisions appear.** Check the `alert_router` function's logs in Application Insights. For local runs, make sure `AzureWebJobs.alert_router.Disabled` is `false` and `EVENTHUB__fullyQualifiedNamespace` is set.
 
 ## Clean up

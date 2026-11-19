@@ -43,7 +43,7 @@ OVERSIZED = "ALR-1011"
 OVERSIZED_MARKER = "rclone"
 DECISION_SOURCES = {"decision1", "decision1_low_confidence"}
 
-# What a reviewer would expect from Decision-1. A mismatch is reported but does not fail the
+# What a reviewer would expect from the decision model. A mismatch is reported but does not fail the
 # run, because the model's judgment can reasonably differ on borderline alerts.
 EXPECTED_ROUTE = {
     SUSPICIOUS: {"investigate"},
@@ -322,11 +322,11 @@ def validate(state: dict[str, Any]) -> tuple[list[str], list[str]]:
 
     routine = _only(records.get(ROUTINE, []))
     if routine.get("source") not in DECISION_SOURCES:
-        errors.append(f"{ROUTINE}: not routed by Decision-1 (source {routine.get('source')!r})")
+        errors.append(f"{ROUTINE}: not routed by the decision model (source {routine.get('source')!r})")
 
     decided = [r for rs in records.values() for r in rs if r.get("source") in DECISION_SOURCES]
     if not any(r.get("probabilities") for r in decided):
-        errors.append("no Decision-1 record has option probabilities")
+        errors.append("no decision model record has option probabilities")
     summarized = [r for rs in records.values() for r in rs if r.get("route") in {"aggregate", "routine"}]
     if not summarized:
         errors.append("no low-risk alert was summarized (routed aggregate or routine)")

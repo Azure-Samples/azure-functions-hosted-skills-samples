@@ -9,7 +9,7 @@ targetScope = 'subscription'
 param environmentName string
 
 @minLength(1)
-@description('Primary location for all resources. Must support Azure Functions Flex Consumption and Global Standard deployments of gpt-5.4 and Microsoft-Decision-1 in Microsoft Foundry.')
+@description('Primary location for all resources. Must support Azure Functions Flex Consumption and Global Standard deployments of gpt-5.4 and Microsoft-Decision-1.1 in Microsoft Foundry.')
 @allowed([
   'brazilsouth'
   'canadacentral'
@@ -41,10 +41,10 @@ param foundryModelVersion string = '2026-03-05'
 @description('Microsoft Foundry deployment capacity.')
 param foundryDeploymentCapacity int = 50
 
-@description('Deployment name for Microsoft-Decision-1 used by the Event Hubs router. Deployment names cannot contain the reserved word Microsoft.')
-param decisionDeploymentName string = 'decision-1'
+@description('Deployment name for Microsoft-Decision-1.1 used by the Event Hubs router. Deployment names cannot contain the reserved word Microsoft.')
+param decisionDeploymentName string = 'decision-1.1'
 
-@description('Microsoft-Decision-1 deployment capacity. Each unit allows 1 request and 1,000 tokens per minute; usage is billed per call, not per unit. Set with azd env set DECISION_CAPACITY.')
+@description('Microsoft-Decision-1.1 deployment capacity. Set with azd env set DECISION_CAPACITY.')
 param decisionDeploymentCapacity int = 50
 
 @description('Principal ID of the user running azd. Used to grant access for local runs and the demo script.')
@@ -201,7 +201,7 @@ module api './app/api.bicep' = {
       AZURE_CLIENT_ID: identityClientId
       ENABLE_MULTIPLATFORM_BUILD: 'true'
       PYTHON_ENABLE_INIT_INDEXING: '1'
-      // Stage 1: Event Hubs router (code) with Microsoft-Decision-1.
+      // Stage 1: Event Hubs router (code) with Microsoft-Decision-1.1.
       EVENTHUB__fullyQualifiedNamespace: eventHubs.outputs.fullyQualifiedNamespace
       EVENTHUB__credential: 'managedidentity'
       EVENTHUB__clientId: identityClientId

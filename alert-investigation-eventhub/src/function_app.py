@@ -5,7 +5,7 @@
 
 ``create_function_app()`` registers every ``*.agent.md`` hosted skill in this folder. The
 router below is ordinary Azure Functions code on the same app: deterministic rules first,
-then Microsoft-Decision-1 for the alerts the rules can't settle.
+then Microsoft-Decision-1.1 for the alerts the rules can't settle.
 """
 
 import logging
@@ -28,7 +28,7 @@ def _dependencies() -> tuple[store.AzureAlertStore, router.Decider]:
     if _store is None:
         _store = store.AzureAlertStore()
     if _decider is None:
-        _decider = router.decision1_decider(DecisionClient.from_environment())
+        _decider = router.decision_decider(DecisionClient.from_environment())
     return _store, _decider
 
 

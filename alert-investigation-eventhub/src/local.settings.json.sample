@@ -11,7 +11,7 @@
     "EVENTHUB_NAME": "alerts",
     "EVENTHUB_CONSUMER_GROUP": "local-dev",
     "DECISION_ENDPOINT": "",
-    "DECISION_DEPLOYMENT": "decision-1",
+    "DECISION_DEPLOYMENT": "decision-1.1",
     "DECISION_MIN_CONFIDENCE": "0.5",
     "DEDUPE_WINDOW_MINUTES": "60",
     "INVESTIGATE_QUEUE": "alerts-investigate",

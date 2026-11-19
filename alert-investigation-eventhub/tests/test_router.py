@@ -4,6 +4,7 @@
 import base64
 import json
 from datetime import UTC, datetime
+from unittest.mock import Mock
 
 import pytest
 from alert_router import router
@@ -76,6 +77,16 @@ def run(bodies, decider, store=None):
     store = store or FakeStore()
     records = router.route_batch(bodies, store=store, decider=decider, now=NOW, settings=SETTINGS)
     return store, {r["group_id"]: r for r in records}
+
+
+def test_decision_decider_uses_the_configured_client():
+    client = Mock()
+    answer = ChoiceAnswer("routine", {"routine": 1.0})
+    client.choose.return_value = answer
+    state = {"alert_count": 1}
+
+    assert router.decision_decider(client)(state) == answer
+    client.choose.assert_called_once_with(state, router.QUESTION, router.INSTRUCTIONS, router.ROUTE_OPTIONS)
 
 
 def test_critical_bypasses_the_model():
