@@ -1,0 +1,85 @@
+# This descriptor drives template package creation in the packaging pipeline.
+schemaVersion: 1
+identity: Azure.Functions.Templates.HostedSkillsSamplesPython
+description: Create a Python Azure Functions app that demonstrates Hosted Skills, with deployment files for azd.
+projects:
+- name: Azure Functions Support Triage Hosted Skill Starter (Python)
+  shortName: ai-hosted-skills-starter-queue-python
+  root: starter-queue
+  stack: python
+  language: Python
+- name: Azure Functions Order Review Hosted Skill Starter (Python)
+  shortName: ai-hosted-skills-starter-servicebus-python
+  root: starter-servicebus
+  stack: python
+  language: Python
+- name: Azure Functions Document Summary Hosted Skill Starter (Python)
+  shortName: ai-hosted-skills-starter-blob-python
+  root: starter-blob
+  stack: python
+  language: Python
+- name: Azure Functions Product Watch Hosted Skill Starter (Python)
+  shortName: ai-hosted-skills-starter-cosmos-python
+  root: starter-cosmos
+  stack: python
+  language: Python
+- name: Azure Functions Hosted Skill Binding Starter (Python)
+  shortName: ai-hosted-skills-starter-hosted-skill-binding-python
+  root: starter-hosted-skill-binding
+  stack: python
+  language: Python
+- name: Azure Functions Customer Returns Review Hosted Skill (Python)
+  shortName: ai-hosted-skills-customer-returns-queue-python
+  root: customer-returns-queue
+  stack: python
+  language: Python
+- name: Azure Functions Invoice Review Hosted Skill (Python)
+  shortName: ai-hosted-skills-invoice-review-blob-python
+  root: invoice-review-blob
+  stack: python
+  language: Python
+- name: Azure Functions Contract Review Hosted Skill (Python)
+  shortName: ai-hosted-skills-contract-review-durable-python
+  root: contract-review-durable
+  stack: python
+  language: Python
+- name: Azure Functions Daily Work Briefing Hosted Skill (Python)
+  shortName: ai-hosted-skills-daily-work-briefing-timer-python
+  root: daily-work-briefing-timer
+  stack: python
+  language: Python
+- name: Azure Functions Customer Retention Hosted Skill (Python)
+  shortName: ai-hosted-skills-customer-retention-cosmos-python
+  root: customer-retention-cosmos
+  stack: python
+  language: Python
+- name: Azure Functions Insurance Claims Review Hosted Skill (Python)
+  shortName: ai-hosted-skills-claims-review-workflow-python
+  root: claims-review-workflow
+  stack: python
+  language: Python
+- name: Azure Functions Alert Investigation Hosted Skill (Python)
+  shortName: ai-hosted-skills-alert-investigation-eventhub-python
+  root: alert-investigation-eventhub
+  stack: python
+  language: Python
+- name: Azure Functions Teams IT Helpdesk Hosted Skill (Python)
+  shortName: ai-hosted-skills-teams-helpdesk-connector-python
+  root: teams-helpdesk-connector
+  stack: python
+  language: Python
+- name: Azure Functions Record Repair Hosted Skill (Python)
+  shortName: ai-hosted-skills-record-repair-servicebus-python
+  root: record-repair-servicebus
+  stack: python
+  language: Python
+- name: Azure Functions Expense Policy Routing Hosted Skill (Python)
+  shortName: ai-hosted-skills-expense-policy-queue-python
+  root: expense-policy-queue
+  stack: python
+  language: Python
+- name: Azure Functions Supplier Change Review Hosted Skill (Python)
+  shortName: ai-hosted-skills-supplier-change-servicebus-python
+  root: supplier-change-servicebus
+  stack: python
+  language: Python
