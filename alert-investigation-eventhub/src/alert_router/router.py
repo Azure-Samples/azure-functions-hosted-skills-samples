@@ -1,15 +1,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-"""Route a batch of alerts: rules first, Microsoft-Decision-1 for the rest, fail safe always.
+"""Route a batch of alerts: rules first, Microsoft-Decision-1.1 for the rest, fail safe always.
 
 Every alert ends in exactly one place:
 
 * suppressed by a known-benign rule  -> recorded in the decisions table
 * duplicate of an alert in the window -> counted on the first alert's fingerprint
 * critical                            -> ``alerts-investigate`` without a model call
-* Decision-1 ``investigate``          -> ``alerts-investigate``
-* Decision-1 ``aggregate``/``routine``-> recorded in the decisions table (the summary)
+* Decision model ``investigate``          -> ``alerts-investigate``
+* Decision model ``aggregate``/``routine``-> recorded in the decisions table (the summary)
 * ``uncertain``, low confidence, an API error, or an invalid event -> ``alerts-review``
 
 Queue messages are bounded: a message that would not fit the Storage Queue limit is written
@@ -71,7 +71,7 @@ class AlertStore(Protocol):
 Decider = Callable[[dict[str, Any]], ChoiceAnswer]
 
 
-def decision1_decider(client: DecisionClient) -> Decider:
+def decision_decider(client: DecisionClient) -> Decider:
     return lambda state: client.choose(state, QUESTION, INSTRUCTIONS, ROUTE_OPTIONS)
 
 
@@ -125,7 +125,7 @@ def _route_group(group: list[dict[str, Any]], decider: Decider, min_confidence: 
     except DecisionError as exc:
         return {"route": "review", "source": "decision1_error", "reason": str(exc)[:500]}
     except Exception as exc:  # noqa: BLE001 - fail safe: an unexpected error must not drop the alert.
-        logger.exception("Decision-1 call failed")
+        logger.exception("Decision model call failed")
         return {"route": "review", "source": "decision1_error", "reason": f"{type(exc).__name__}: {exc}"[:500]}
 
     decision = {
@@ -134,7 +134,7 @@ def _route_group(group: list[dict[str, Any]], decider: Decider, min_confidence: 
         "probabilities": answer.probabilities,
     }
     if answer.choice == "uncertain":
-        return {**decision, "route": "review", "source": "decision1", "reason": "Decision-1 chose uncertain."}
+        return {**decision, "route": "review", "source": "decision1", "reason": "Decision model chose uncertain."}
     if answer.probabilities and answer.confidence < min_confidence:
         return {
             **decision,
@@ -142,7 +142,7 @@ def _route_group(group: list[dict[str, Any]], decider: Decider, min_confidence: 
             "source": "decision1_low_confidence",
             "reason": f"Top probability {answer.confidence:.2f} is below {min_confidence:.2f}.",
         }
-    return {**decision, "route": answer.choice, "source": "decision1", "reason": "Routed by Decision-1."}
+    return {**decision, "route": answer.choice, "source": "decision1", "reason": "Routed by the decision model."}
 
 
 def route_batch(

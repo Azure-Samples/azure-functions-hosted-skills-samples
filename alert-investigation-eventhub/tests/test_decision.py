@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import json
+from unittest.mock import Mock
 
 import pytest
 from alert_router.decision import ChoiceAnswer, DecisionClient, DecisionError, parse_choice
@@ -20,9 +21,9 @@ class FakeHttp:
         return status, payload if isinstance(payload, bytes) else json.dumps(payload).encode(), rest[0] if rest else {}
 
 
-def client(http, **kwargs):
+def client(http, *, deployment="decision-1.1", **kwargs):
     return DecisionClient(
-        "https://cog-x.cognitiveservices.azure.com/", "Microsoft-Decision-1",
+        "https://cog-x.cognitiveservices.azure.com/", deployment,
         token_provider=lambda: "token", post=http, backoff_seconds=0, **kwargs,
     )
 
@@ -31,17 +32,38 @@ ANSWER = {"answers": {"route": {"type": "choice", "choice": "routine",
                                 "probabilities": {"investigate": 0.05, "aggregate": 0.1, "routine": 0.8, "uncertain": 0.05}}}}
 
 
-def test_choose_sends_request_and_parses_answer():
+@pytest.mark.parametrize("deployment", ["decision-1.1", "my-routing-deployment"])
+def test_choose_sends_request_and_parses_answer(deployment):
     http = FakeHttp((200, ANSWER))
-    answer = client(http).choose({"alert": 1}, "route", "Pick one", OPTIONS)
+    answer = client(http, deployment=deployment).choose({"alert": 1}, "route", "Pick one", OPTIONS)
     assert answer == ChoiceAnswer("routine", ANSWER["answers"]["route"]["probabilities"])
     assert answer.confidence == 0.8
     url, headers, body = http.calls[0]
     assert url == "https://cog-x.cognitiveservices.azure.com/providers/microsoft/v1/systemone"
     assert headers["Authorization"] == "Bearer token"
-    assert body["model"] == "Microsoft-Decision-1"
+    assert body["model"] == deployment
     assert body["state"] == {"alert": 1}
     assert body["questions"]["route"] == {"type": "choice", "instructions": "Pick one", "criteria": OPTIONS}
+
+
+def test_from_environment_uses_the_configured_deployment(monkeypatch):
+    credential = object()
+    credential_factory = Mock(return_value=credential)
+    token_factory = Mock(return_value=lambda: "token")
+    http = FakeHttp((200, ANSWER))
+    monkeypatch.setenv("DECISION_ENDPOINT", "https://cog-x.cognitiveservices.azure.com/")
+    monkeypatch.setenv("DECISION_DEPLOYMENT", "decision-1.1")
+    monkeypatch.setenv("AZURE_CLIENT_ID", "identity-client-id")
+    monkeypatch.setattr("azure.identity.DefaultAzureCredential", credential_factory)
+    monkeypatch.setattr("azure.identity.get_bearer_token_provider", token_factory)
+    monkeypatch.setattr("alert_router.decision._urllib_post", http)
+
+    answer = DecisionClient.from_environment().choose({}, "route", "Pick one", OPTIONS)
+
+    assert answer.choice == "routine"
+    assert http.calls[0][2]["model"] == "decision-1.1"
+    credential_factory.assert_called_once_with(managed_identity_client_id="identity-client-id")
+    token_factory.assert_called_once_with(credential, "https://cognitiveservices.azure.com/.default")
 
 
 def test_retries_throttling_then_succeeds(monkeypatch):

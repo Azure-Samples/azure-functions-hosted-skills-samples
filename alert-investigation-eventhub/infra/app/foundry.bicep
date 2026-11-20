@@ -9,8 +9,8 @@ param modelDeploymentName string = 'gpt-5.4'
 param modelName string = 'gpt-5.4'
 param modelVersion string = '2026-03-05'
 param deploymentCapacity int = 50
-@description('Deployment name for Microsoft-Decision-1, the routing model the Event Hubs function calls. Cannot contain the reserved word Microsoft.')
-param decisionDeploymentName string = 'decision-1'
+@description('Deployment name for Microsoft-Decision-1.1, the routing model the Event Hubs function calls. Cannot contain the reserved word Microsoft.')
+param decisionDeploymentName string = 'decision-1.1'
 param decisionModelVersion string = '1'
 param decisionDeploymentCapacity int = 50
 param managedIdentityPrincipalId string
@@ -71,7 +71,7 @@ resource foundryModelDeployment 'Microsoft.CognitiveServices/accounts/deployment
   }
 }
 
-// Microsoft-Decision-1 returns a typed decision (choice + per-option probabilities) instead of
+// Microsoft-Decision-1.1 returns a typed decision (choice + per-option probabilities) instead of
 // generated text. The Event Hubs function uses it to route alerts cheaply at high volume.
 resource decisionModelDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-10-01' = {
   parent: foundryAccount
@@ -83,7 +83,7 @@ resource decisionModelDeployment 'Microsoft.CognitiveServices/accounts/deploymen
   properties: {
     model: {
       format: 'Microsoft'
-      name: 'Microsoft-Decision-1'
+      name: 'Microsoft-Decision-1.1'
       version: decisionModelVersion
     }
   }
