@@ -18,6 +18,8 @@ app = create_function_app()
 
 TEXT_EXTENSIONS = {".txt", ".md", ".csv", ".json", ".log", ".html", ".xml"}
 MAX_CHARS = 100_000
+# A UTF-8 character is at most 4 bytes, so this many bytes always holds MAX_CHARS characters.
+MAX_BYTES = MAX_CHARS * 4
 
 # Flex Consumption runs blob triggers through Event Grid. Azurite has no Event Grid,
 # so local runs scan the container instead. Set by the DOCUMENTS_BLOB_SOURCE app setting.
@@ -38,8 +40,10 @@ async def summarize_document(blob: func.InputStream, skill: HostedSkill) -> None
         logging.warning("Skipping %s: only text files (%s) are summarized.", name, ", ".join(sorted(TEXT_EXTENSIONS)))
         return
 
-    text = blob.read().decode("utf-8", errors="replace")
-    note = f" (truncated to the first {MAX_CHARS} characters)" if len(text) > MAX_CHARS else ""
+    # Read and decode only a bounded prefix, so a large upload can't exhaust worker memory.
+    text = blob.read(MAX_BYTES).decode("utf-8", errors="replace")
+    truncated = len(text) > MAX_CHARS or (blob.length or 0) > MAX_BYTES
+    note = f" (truncated to the first {MAX_CHARS} characters)" if truncated else ""
     prompt = (
         f"Document name: {name}\n"
         f"Size: {blob.length} bytes{note}\n\n"
